@@ -68,7 +68,7 @@ stmt_list: stmt
          | stmt_list stmt
          ;
 
-stmt: SEMICOLON                                     {$$ = opr(';', 2, NULL, NULL);}
+stmt: SEMICOLON                                     {$$ = opr(SEMICOLON, 2, NULL, NULL);}
     | expr SEMICOLON                                {$$ = $1;}
     | PRINT expr SEMICOLON                          {$$ = opr(PRINT,1,$2);}
     | dec
@@ -84,16 +84,16 @@ expr: INTEGER               {$$ = con($1);} //manage constants
     | BOOLEAN               {$$ = con($1);}
     | VARIABLE              {$$ = id($1);} //manage variables - namely an IDENTIFIER
     | MIN expr %prec UMINUS {$$ = opr(UMINUS,1,$2);}
-    | expr PLUS expr         {$$ = opr('+',2,$1,$3);}
-    | expr MIN expr         {$$ = opr('-',2,$1,$3);}
-    | expr MUL expr         {$$ = opr('*',2,$1,$3);}
-    | expr DIV expr         {$$ = opr('/',2,$1,$3);}
-    | expr LT  expr         {$$ = opr('<',2,$1,$3);}
-    | expr GT expr         {$$ = opr('>',2,$1,$3);}
-    | expr GTE expr          {$$ = opr(GE,2,$1,$3);}
-    | expr LTE expr          {$$ = opr(LE,2,$1,$3);}
+    | expr PLUS expr        {$$ = opr(PLUS,2,$1,$3);}
+    | expr MIN expr         {$$ = opr(MIN,2,$1,$3);}
+    | expr MUL expr         {$$ = opr(MUL,2,$1,$3);}
+    | expr DIV expr         {$$ = opr(DIV,2,$1,$3);}
+    | expr LT  expr         {$$ = opr(LT,2,$1,$3);}
+    | expr GT expr          {$$ = opr(GT,2,$1,$3);}
+    | expr LTE expr         {$$ = opr(LTE,2,$1,$3);}
+    | expr GTE expr         {$$ = opr(GTE,2,$1,$3);}
     | expr NE expr          {$$ = opr(NE,2,$1,$3);}
-    | expr DEQ expr          {$$ = opr(EQ,2,$1,$3);}
+    | expr DEQ expr         {$$ = opr(DEQ,2,$1,$3);}
     | LP expr RP            {$$ = $2;}
     ;
 
