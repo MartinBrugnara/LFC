@@ -5,8 +5,8 @@
 %{
     #include <stdlib.h>
     #include <string.h>
-    #include "y.tab.h"
     #include "interpreter.h"
+    #include "y.tab.h"
 %}
 
 %%
@@ -55,7 +55,7 @@
                     }
 
 0               {
-                    yylval.iValue = atoi(yytext);
+                    yylval.iVal = atoi(yytext);
                     return INTEGER;
                 }
 
@@ -68,7 +68,7 @@
                             for(i=0; f[i] != ','; i++);
                             f[i] = '.';
 
-                            yylval.fVal = atof(f);
+                            yylval.rVal = atof(f);
 
                             free(f);
                             return REALNUM;
