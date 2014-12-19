@@ -10,9 +10,9 @@
 
 %%
 
-">="            return GE; // Start of Boolean exp
-"<="            return LE;
-"=="            return EQ;
+">="            return GTE; // Start of Boolean exp
+"<="            return LTE;
+"=="            return DEQ;
 "!="            return NE;
 
 "while"         return WHILE; // Start of Flow Control
@@ -82,7 +82,13 @@
                     return INTEGER;
                 }
 
-[-+<>=*/.]   { return *yytext; /*TODO: remove .? */ }
+"-"   return MIN;
+"+"   return PLUS;
+"<"   return LT;
+">"   return GT;
+"="   return EQ;
+"*"   return MUL;
+"/"   return DIV;
 
 [ \t\n]         ;/* skip whitespace */
 \;              return SEMICOLON;
