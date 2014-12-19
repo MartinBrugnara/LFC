@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include "interpreter.h"
+#include "functional.h"
 #include "y.tab.h"
 
 // Hold ex() return value.
@@ -175,7 +176,10 @@ ret * ex(nodeType *p) {
 
                 // TODO: introduce here coercion
                 case UMINUS:
-                    return -ex(p->opr.op[0]);// TODO: fixme
+                    {
+                        ret * a = ex(p->opr.op[0]);
+                        return apply(&neg, a, NULL, a->type);
+                    }
 
                 case PLUS:
                     {
@@ -187,17 +191,105 @@ ret * ex(nodeType *p) {
 
                         return apply(&sum, a, b, dstType);
                     }
-                case '-':       return ex(p->opr.op[0]) - ex(p->opr.op[1]);
-                case '*':       return ex(p->opr.op[0]) * ex(p->opr.op[1]);
-                case '/':       return ex(p->opr.op[0]) / ex(p->opr.op[1]);
-                case '<':       return ex(p->opr.op[0]) < ex(p->opr.op[1]);
-                case '>':       return ex(p->opr.op[0]) > ex(p->opr.op[1]);
-                case GE:        return ex(p->opr.op[0]) >= ex(p->opr.op[1]);
-                case LE:        return ex(p->opr.op[0]) <= ex(p->opr.op[1]);
-                case NE:        return ex(p->opr.op[0]) != ex(p->opr.op[1]);
-                case EQ:        return ex(p->opr.op[0]) == ex(p->opr.op[1]);
 
+                case MIN:
+                    {
+                        ret * a = ex(p->opr.op[0]);
+                        ret * b = ex(p->opr.op[1]);
 
+                        // TODO: add here type checking
+                        varTypeEnum dstType = max(a->type, b->type);
+
+                        return apply(&min, a, b, dstType);
+                    }
+
+                case MUL:
+                    {
+                        ret * a = ex(p->opr.op[0]);
+                        ret * b = ex(p->opr.op[1]);
+
+                        // TODO: add here type checking
+                        varTypeEnum dstType = max(a->type, b->type);
+
+                        return apply(&mul, a, b, dstType);
+                    }
+
+                case DIV:
+                    {
+                        ret * a = ex(p->opr.op[0]);
+                        ret * b = ex(p->opr.op[1]);
+
+                        // TODO: add here type checking
+                        varTypeEnum dstType = max(a->type, b->type);
+
+                        return apply(&dvi, a, b, dstType);
+                    }
+
+                case LT:
+                    {
+                        ret * a = ex(p->opr.op[0]);
+                        ret * b = ex(p->opr.op[1]);
+
+                        // TODO: add here type checking
+                        varTypeEnum dstType = max(a->type, b->type);
+
+                        return apply(&lt, a, b, dstType);
+                    }
+
+                case GT:
+                    {
+                        ret * a = ex(p->opr.op[0]);
+                        ret * b = ex(p->opr.op[1]);
+
+                        // TODO: add here type checking
+                        varTypeEnum dstType = max(a->type, b->type);
+
+                        return apply(&gt, a, b, dstType);
+                    }
+
+                case GTE:
+                    {
+                        ret * a = ex(p->opr.op[0]);
+                        ret * b = ex(p->opr.op[1]);
+
+                        // TODO: add here type checking
+                        varTypeEnum dstType = max(a->type, b->type);
+
+                        return apply(&gte, a, b, dstType);
+                    }
+
+                case LTE:
+                    {
+                        ret * a = ex(p->opr.op[0]);
+                        ret * b = ex(p->opr.op[1]);
+
+                        // TODO: add here type checking
+                        varTypeEnum dstType = max(a->type, b->type);
+
+                        return apply(&lte, a, b, dstType);
+                    }
+
+                case NE:
+                    {
+                        ret * a = ex(p->opr.op[0]);
+                        ret * b = ex(p->opr.op[1]);
+
+                        // TODO: add here type checking
+                        varTypeEnum dstType = max(a->type, b->type);
+
+                        return apply(&neq, a, b, dstType);
+                    }
+
+                case DEQ:
+                    {
+                        ret * a = ex(p->opr.op[0]);
+                        ret * b = ex(p->opr.op[1]);
+
+                        // TODO: add here type checking
+                        varTypeEnum dstType = max(a->type, b->type);
+
+                        return apply(&deq, a, b, dstType);
+                    }
             }
    }
     printf("%s\n", "Unable to evaluate node");

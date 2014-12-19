@@ -33,7 +33,7 @@ nodeType *con(void *value, varTypeEnum type){
             p->con.i = *(int*)value;
             break;
         case REALTYPE:
-            p->con.f = *(float*)value;
+            p->con.r = *(float*)value;
             break;
         case BOOLTYPE:
             p->con.b = *(int*)value;
