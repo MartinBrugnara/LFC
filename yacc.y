@@ -1,6 +1,7 @@
 /* Author: Martin Brugnara #157791 <martin.brugnara@studenti.unitn.it> */
 
 %{
+    #include "interpreter.h"
     // TODO: include
     /* GLOBAL VARS */
     symrec * symTable;
@@ -16,9 +17,6 @@
     nodeType * nPtr;
 
     varTypeEnum varType;
-    parameter *parameter;
-    routine * routine;
-    linkedList *lista;
 };
 
 /*
@@ -36,10 +34,14 @@
 %nonassoc IFX
 %nonassoc ELSE
 
-%left GTE LTE DEQ NE GT LT
+%left EQ
+%left DEQ NE GT LT GTE LTE
 %left PLUS MIN
 %left MUL DIV
-%nonassoc UMINUS RCURLY LCURLY LP RP COMMA SEMICOLON  INT FLOAT  MAIN
+%nonassoc UMINUS RCURLY LCURLY LP RP COMMA SEMICOLON INTEGER REALNUM BOOLEAN MAIN
+
+
+%type <nPtr> stmt dec expr stmt_list opt_stmt_list opt_dec_list
 
 
 /* TODO: go ahed  with token definition and rules */
@@ -58,12 +60,8 @@ program: opt_dec_list
         ;
 
 opt_dec_list: /* empty */
-            | dec_list /* Implicit $$=$1. */
+            | opt_dec_list dec  {$$ = opr(SEMICOLON, 2, $1, $2);}
             ;
-
-dec_list: dec
-        | dec_list dec  {$$ = opr(SEMICOLON, 2, $1, $2);}
-        ;
 
 dec: VARIABLE EQ expr SEMICOLON {$$ = opr(EQ,2,id($1),$3);}
    ;
