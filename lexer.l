@@ -2,6 +2,12 @@
 * Author: Martin Brugnara #157791 <martin.brugnara@studenti.unitn.it>
 */
 
+%{
+    #include <stdlib.h>
+    #include "y.tab.h"
+    #include "interpreter.h"
+%}
+
 %%
 
 ">="            return GE; // Start of Boolean exp
@@ -89,7 +95,3 @@
                 yyerror("Previous char is unknown to lexer");}
 
 %%
-
-int yywrap(void) {
-    return 1;
-}

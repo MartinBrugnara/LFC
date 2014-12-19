@@ -14,3 +14,6 @@ typedef struct symrec
 
 	struct symrec *next;
 } symrec;
+
+
+void yyerror(const char *);
