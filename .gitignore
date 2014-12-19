@@ -3,3 +3,6 @@ lex.yy.c
 *.tab.*
 interpreter
 *.output
+
+*.sw*
+~*
