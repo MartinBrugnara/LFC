@@ -1,20 +1,26 @@
 /* Author: Martin Brugnara #157791 <martin.brugnara@studenti.unitn.it> */
 
 %{
+    #include <stdlib.h>
+    #include <stdio.h>
     #include "interpreter.h"
+
     // TODO: include
     /* GLOBAL VARS */
     symrec * symTable;
+
+    // ext references (dark magic)
+    int yylex();
 %}
 %error-verbose
 
 %union { // yylval_t
-    int     iValue;
-    float   rValue;
-    int     bValue;
+    int     iVal;
+    float   rVal;
+    int     bVal;
 
-    symrec   * sRec;
-    nodeType * nPtr;
+    struct symrec   * sRec;
+    struct nodeType * nPtr;
 
     varTypeEnum varType;
 };
@@ -25,9 +31,9 @@
     format:
         %token <field_name of union> TOKEN
 */
-%token <iValue> INTEGER
-%token <rValue> REALNUM
-%token <bValue> BOOLEAN
+%token <iVal> INTEGER
+%token <rVal> REALNUM
+%token <bVal> BOOLEAN
 %token <sRec>   VARIABLE
 
 %token WHILE IF PRINT FOR TO
@@ -40,11 +46,7 @@
 %left MUL DIV
 %nonassoc UMINUS RCURLY LCURLY LP RP COMMA SEMICOLON INTEGER REALNUM BOOLEAN MAIN
 
-
 %type <nPtr> stmt dec expr stmt_list opt_stmt_list opt_dec_list
-
-
-/* TODO: go ahed  with token definition and rules */
 
 %%
 
@@ -85,9 +87,9 @@ stmt: SEMICOLON                                     {$$ = opr(SEMICOLON, 2, NULL
     | LCURLY stmt_list RCURLY                       {$$ = $2;}
     ;
 
-expr: INTEGER               {$$ = con($1, INTTYPE);} //manage constants
-    | REALNUM               {$$ = con($1, REALTYPE);}
-    | BOOLEAN               {$$ = con($1, BOOLTYPE);}
+expr: INTEGER               {$$ = con(&$1, INTTYPE);} //manage constants
+    | REALNUM               {$$ = con(&$1, REALTYPE);}
+    | BOOLEAN               {$$ = con(&$1, BOOLTYPE);}
     | VARIABLE              {$$ = id($1);} //manage variables - namely an IDENTIFIER
     | MIN expr %prec UMINUS {$$ = opr(UMINUS,1,$2);}
     | expr PLUS expr        {$$ = opr(PLUS,2,$1,$3);}

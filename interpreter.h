@@ -1,3 +1,9 @@
+#ifndef INTERPRETER
+#define INTERPRETER
+
+#include <sys/types.h>
+
+void * xmalloc(size_t size);
 
 // Symbol Table (list)
 // Type for symrec
@@ -6,7 +12,7 @@ typedef struct symrec {
 	char * name; // Comes from lexer
     union { // Comes from yacc & run time
         int     iVal;
-        float   fVal;
+        float   rVal;
         int     bVal;
     };
     varTypeEnum varType;
@@ -14,6 +20,8 @@ typedef struct symrec {
 	struct symrec *next;
 } symrec;
 
+// Enum per assignment int b; real c; bool d;
+typedef enum{INT, REAL, BOOL} varDecEnum;
 /* Code node tree */
 
 /* constants */
@@ -64,3 +72,4 @@ void yyerror(const char *);
 
 /* GLOBAL VARS */
 extern symrec * symTable; /* declared in yacc.y */
+#endif
