@@ -4,6 +4,7 @@
 
 %{
     #include <stdlib.h>
+    #include <string.h>
     #include "y.tab.h"
     #include "interpreter.h"
 %}
@@ -41,17 +42,13 @@
 
 [a-zA-Z][a-zA-Z_]*  { // Get or create variable
                         symrec * s = getsym(yytext);
-
                         if (s == 0){ // Does not exists (yet)
-                            s = (symrec *) malloc (sizeof (symrec));
-
+                            s = (symrec *) xmalloc (sizeof (symrec));
                             // var name + \0
-                            s->name = (char *) malloc(strlen(yytext) + 1);
-
+                            s->name = (char *) xmalloc(strlen(yytext) + 1);
                             // strcpy also copy \0
                             strcpy (s->name,yytext);
                         }
-
                         // yylval = s
                         *((symrec**)&yylval) = s;
                         return VARIABLE;
@@ -63,7 +60,7 @@
                 }
 
 ([1-9][0-9]*,[0-9]+)    { // Parse the whole string and replace ',' the atof
-                            char * f = (char *) malloc(strlen(yytext) + 1);
+                            char * f = (char *) xmalloc(strlen(yytext) + 1);
                             strcpy(f, yytext);
 
                             // We are sure ',' is in there.
@@ -99,5 +96,4 @@
 \}              return RCURLY;
 .               {ECHO;
                 yyerror("Previous char is unknown to lexer");}
-
 %%
