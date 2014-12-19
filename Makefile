@@ -10,7 +10,6 @@ interpreter: y.tab.o lex.yy.o interpreter.o
 
 interpreter.o: interpreter.c
 
-
 lex.yy.o: lex.yy.c y.tab.h
 
 y.tab.c y.tab.h: yacc.y
