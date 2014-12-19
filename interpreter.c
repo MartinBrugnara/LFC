@@ -52,26 +52,28 @@ nodeType * id(symrec * ide){
     strcpy(p->id.name, ide->name);
 
     if (getsym(ide->name) == NULL) { // Symbol not yet in SymT
-        putsym(p->id.name);
+        fprintf(stderr, "Undeclared variable %s\n", ide->name);
+        //putsym(p->id.name);
     }
     return p;
 }
 
 // Search in Symbol Table (that is a fucking list) O(n)
 symrec * getsym(const char * const identifier) {
-    symrec *ptr;
-    for (ptr = symTable; ptr != (symrec *) 0; ptr = (symrec *)ptr->next){
-        if (strcmp (ptr->name, identifier) == 0)
+    for (symrec *ptr = symTable; ptr != NULL; ptr=(symrec *)ptr->next){
+        if (!strcmp(ptr->name, identifier))
             return ptr; // found
     }
     return NULL; // not found
 }
 
-symrec * putsym(char const * identifier) {
+symrec * putsym(char const * identifier, varTypeEnum type) {
+    printf("registering %s\n", identifier);
     symrec *ptr = (symrec *)xmalloc(sizeof (symrec));
     ptr->name = (char *) malloc (strlen (identifier) + 1);
     strcpy (ptr->name,identifier);
-    ptr->next = (struct symrec *)symTable;
+    ptr->type = type;
+    ptr->next = symTable; // add in head O(1)
     symTable = ptr;
     return ptr;
 }

@@ -1,0 +1,11 @@
+main{
+	int i;
+	i = 0;
+	int [4] array;
+	while(i < 4){
+	 array[i] = i;
+	 i = i +1;
+	}
+	print array;
+
+}

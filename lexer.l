@@ -41,17 +41,11 @@
 
 
 [a-zA-Z][a-zA-Z_]*  { // Get or create variable
-                        symrec * s = getsym(yytext);
-                        if (s == 0){ // Does not exists (yet)
-                            s = (symrec *) xmalloc (sizeof (symrec));
-                            // var name + \0
-                            s->name = (char *) xmalloc(strlen(yytext) + 1);
-                            // strcpy also copy \0
-                            strcpy (s->name,yytext);
-                        }
-                        // yylval = s
-                        *((symrec**)&yylval) = s;
-                        return VARIABLE;
+                        // var name + \0
+                        yylval.varName = (char *)xmalloc(strlen(yytext) + 1);
+                        // strcpy also copy \0
+                        strcpy(yylval.varName, yytext);
+                        return VARIABLE_NAME;
                     }
 
 0               {
