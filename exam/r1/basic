@@ -1,0 +1,25 @@
+main{
+	int i; 
+	real r;
+	bool t; 
+	bool b;
+	bool f;
+	i = 1;
+	r = 1,1;
+	t = true;
+	f = false;
+
+	if(t){
+		printInt i;
+	}
+	else{
+		printInt 3;
+	}
+	if(not f){
+		printReal r;
+	}
+	else{
+		printInt 4;
+	}
+
+}

@@ -21,10 +21,7 @@ typedef struct symrec {
 	struct symrec *next;
 } symrec;
 
-// Enum per assignment int b; real c; bool d;
-typedef enum{INT, REAL, BOOL} varDecEnum;
 /* Code node tree */
-
 /* constants */
 typedef struct {
     union {
@@ -65,7 +62,7 @@ nodeType * id(symrec * ide);
 
 
 symrec * getsym(const char * const identifier);
-symrec * putsym(char const * identifier);
+symrec * putsym(char const * identifier, varTypeEnum type);
 
 
 nodeType *opr(int oper, int nops, ...);

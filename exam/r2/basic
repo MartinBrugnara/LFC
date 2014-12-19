@@ -1,0 +1,11 @@
+main{
+	int i; 
+	real r;
+	i = 1;
+	r = 1,1;
+
+	i = r;
+	r = (3*3);
+	printInt i;
+	printReal r;
+}

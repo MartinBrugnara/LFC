@@ -32,7 +32,9 @@ ret * ex(nodeType *p) {
     // Early exit on EOTree.
     if (!p) return 0;
 
+    printf("type: %d\n", p->type);
     switch(p->type) {
+
         case nodeCon:
             // assert conNodeType
             retv = xmalloc(sizeof(ret));
@@ -292,6 +294,6 @@ ret * ex(nodeType *p) {
                     }
             }
    }
-    printf("%s\n", "Unable to evaluate node");
+    printf("%s %c\n", "Unable to evaluate node", p->opr.oper);
     return 0;
 }

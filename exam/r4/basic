@@ -1,0 +1,29 @@
+main{
+	int i; 
+	real r;
+	bool t; 
+	bool b;
+	bool f;
+	i = 1;
+	r = 1,1;
+	t = true;
+	f = false;
+
+	if(t){
+		print i;
+	}
+	else{
+		print 3;
+	}
+	if(not f){
+		print r;
+	}
+	else{
+		print 4;
+	}
+	print false;
+	print true;
+	print false and not true;
+	print true || (not false and true);
+
+}
