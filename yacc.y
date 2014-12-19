@@ -22,7 +22,7 @@
     struct symrec   * sRec;
     struct nodeType * nPtr;
 
-    varTypeEnum varType;
+    varTypeEnum type;
 };
 
 /*
@@ -34,7 +34,7 @@
 %token <iVal> INTEGER
 %token <rVal> REALNUM
 %token <bVal> BOOLEAN
-%token <sRec>   VARIABLE
+%token <sRec> VARIABLE
 
 %token WHILE IF PRINT FOR TO
 %nonassoc IFX
@@ -55,8 +55,8 @@ program: opt_dec_list
         opt_stmt_list   {
                             /* since I do not give a fuck about func
                                 I deliberately skip scope creation */
-                            ex($1, symTable); // Populate Global VARS
-                            ex($3, symTable); // Exec Main
+                            ex($1); // Populate Global VARS
+                            ex($3); // Exec Main
                             exit(0); // exit success
                         }
         ;
