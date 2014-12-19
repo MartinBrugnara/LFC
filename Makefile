@@ -13,10 +13,10 @@ interpreter.o: interpreter.c
 
 lex.yy.o: lex.yy.c y.tab.h
 
-y.tab.c y.tab.h: calc.y
+y.tab.c y.tab.h: yacc.y
 	$(YACC) -v yacc.y
 
-lex.yy.c: calc.l
+lex.yy.c: lexer.l
 	$(LEX) lexer.l
 
 clean:
