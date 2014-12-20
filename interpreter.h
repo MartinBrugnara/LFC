@@ -64,8 +64,7 @@ typedef struct nodeType{
 
 
 nodeType * con(void *value, varTypeEnum type);
-nodeType * id(symrec * ide);
-
+nodeType * id(const char * const);
 
 symrec * getsym(const char * const identifier);
 symrec * putsym(char const * identifier, varTypeEnum type);
