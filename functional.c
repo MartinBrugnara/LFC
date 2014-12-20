@@ -52,3 +52,4 @@ conNodeType * apply(mappable f, conNodeType * a, conNodeType * b, varTypeEnum ds
 
     return res;
 }
+

@@ -1,0 +1,9 @@
+main{
+    int i;
+    real r;
+    bool b;
+
+    print i + r;
+    print i + b;
+    print r + b;
+}
