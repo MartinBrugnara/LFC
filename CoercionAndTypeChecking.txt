@@ -1,3 +1,4 @@
+
 Assignment (errors)
 
 Y = Yes
@@ -6,9 +7,9 @@ E = Error
 
    | I | R | B |
 ---+---+---+---+
- I | Y | E | U |
+ I | Y | E | E |
 ---+---+---+---+
- R | Y | Y | U |
+ R | Y | Y | E |
 ---+---+---+---+
  B | Y | E | Y |
 ---+---+---+---+
@@ -18,9 +19,9 @@ Symbols with 2 operands
 
         | int - int | real real | bool bool | int real  | int bool  | rela bool |
 --------+-----------+-----------+-----------+-----------+-----------+-----------+
-+ - * / |    int    |    real   |   error   |   real    |   error?  |   error?  |
++ - * / |    int    |    real   |   error   |   real    |   error   |   error   |
 --------+-----------+-----------+-----------+-----------+-----------+-----------+
-  < <=  |    bool   |    bool   |   error   |   bool    |   error?  |   error?  |
+  < <=  |    bool   |    bool   |   error   |   bool    |   error   |   error   |
   > >=  |           |           |           |           |           |           |
 --------+-----------+-----------+-----------+-----------+-----------+-----------+
   == != |   bool    |   bool    |   bool    |   bool    |   bool    |   error   |
