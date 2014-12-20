@@ -100,6 +100,7 @@ ret * ex(nodeType *p) {
                             // exec
                             ex(p->opr.op[3]);
 
+                            // Please use singleton for con too
                             ex(opr(EQ, 2,
                                 p->opr.op[0],
                                 con(&(*ex(opr(PLUS, 2,
@@ -118,6 +119,25 @@ ret * ex(nodeType *p) {
                     else if (p->opr.nops > 2)
                         ex(p->opr.op[2]); // ELSE (if any)
                     return 0;
+
+                case PRINTINT:
+                    {
+                        ret * to_print = ex(p->opr.op[0]);
+                        if (to_print->type != INTTYPE) {
+                            yyerror("Non suitable type for printInt.");
+                        }
+                        printf("%d\n", to_print->i);
+                        return 0;
+                    }
+                case PRINTREAL:
+                    {
+                        ret * to_print = ex(p->opr.op[0]);
+                        if (to_print->type != REALTYPE) {
+                            yyerror("Non suitable type for printReal.");
+                        }
+                        printf("%f\n", to_print->r);
+                        return 0;
+                    }
 
                 case PRINT:
                     {
