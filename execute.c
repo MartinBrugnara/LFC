@@ -29,8 +29,10 @@ nodeType * ONE() {
  */
 ret * ex(nodeType *p) {
     // Early exit on EOTree.
-    printf("[DEBUG] p is null\n");
-    if (!p) return 0;
+    if (!p){
+        printf("[DEBUG] p is null\n");
+        return 0;
+    }
 
     printf("[DEBUG] p->type: %d\n", p->type);
     switch(p->type) {
@@ -56,6 +58,8 @@ ret * ex(nodeType *p) {
                     fprintf(stderr, "There is not such '%s' variable in the symtable\n", p->id.name);
                     exit(1);
                 }
+
+                printf("[DEBUG]\t\tfound of %d with val %d\n", s->type, s->i);
 
                 ret * r = xmalloc(sizeof(ret));
                 r->type = s->type;
@@ -117,9 +121,15 @@ ret * ex(nodeType *p) {
 
 
                 case PRINT:
-                    printf("[DEBUG] printf");
+                    printf("[DEBUG] printf\n");
                     {
                         ret * to_print = ex(p->opr.op[0]);
+
+                        printf("[DEBUG]\ttype:%d, val:%d\n",
+                                to_print->type,
+                                to_print->i
+                                );
+
                         switch(to_print->type){
                             case INTTYPE:
                                 printf("%d\n", to_print->i);

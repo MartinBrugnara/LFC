@@ -1,5 +1,17 @@
 int q;
 main {
+   q = 7;
+   print q;
+
    int a;
-   a = 2;
+   a = 777;
+   print a;
+
+   bool b;
+   b = true;
+   print b;
+
+   real c;
+   c = 2,3;
+   print c;
 }
