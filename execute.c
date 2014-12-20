@@ -121,36 +121,25 @@ ret * ex(nodeType *p) {
                     return 0;
 
                 case PRINTINT:
-                    {
-                        ret * to_print = ex(p->opr.op[0]);
-                        if (to_print->type != INTTYPE) {
-                            yyerror("Non suitable type for printInt.");
-                        }
-                        printf("%d\n", to_print->i);
-                        return 0;
-                    }
                 case PRINTREAL:
-                    {
-                        ret * to_print = ex(p->opr.op[0]);
-                        if (to_print->type != REALTYPE) {
-                            yyerror("Non suitable type for printReal.");
-                        }
-                        printf("%f\n", to_print->r);
-                        return 0;
-                    }
+                case PRINTBOOL:
 
                 case PRINT:
                     {
+                        int cmd = p->opr.oper;
                         ret * to_print = ex(p->opr.op[0]);
 
                         switch(to_print->type){
                             case INTTYPE:
+                                if (cmd != PRINT && cmd != PRINTINT) yyerror("Type error.");
                                 printf("%d\n", to_print->i);
                                 break;
                             case REALTYPE:
+                                if (cmd != PRINT && cmd != PRINTREAL) yyerror("Type error.");
                                 printf("%f\n", to_print->r);
                                 break;
                             case BOOLTYPE:
+                                if (cmd != PRINT && cmd != PRINTBOOL) yyerror("Type error.");
                                 if (to_print->b)
                                     printf("true\n");
                                 else

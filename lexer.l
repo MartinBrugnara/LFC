@@ -26,6 +26,7 @@
 "print"         return PRINT;
 "printInt"		return PRINTINT;
 "printReal"		return PRINTREAL;
+"printBool"		return PRINTBOOL;
 "for"           return FOR;
 "to"            return TO;
 
