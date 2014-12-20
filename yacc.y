@@ -7,7 +7,7 @@
 
     // TODO: include
     /* GLOBAL VARS */
-    symrec * symTable;
+    symrec * symTable = NULL;
 
     // ext references (dark magic)
     int yylex();
@@ -25,7 +25,7 @@
 
     char * varName;
 
-    varTypeEnum type;
+    // varTypeEnum type; // was used by  B -> ...
 };
 
 /*
@@ -68,20 +68,20 @@ program: opt_dec_list
                         }
         ;
 
-opt_dec_list: /* empty */
+opt_dec_list: /* empty */       {$$ = NULL;}
             | opt_dec_list dec  {$$ = opr(SEMICOLON, 2, $1, $2);}
             ;
 
 
-dec: INT VARIABLE_NAME SEMICOLON    { putsym($2, INTTYPE); }
-   | REAL VARIABLE_NAME SEMICOLON    { putsym($2, REALTYPE); }
-   | BOOL VARIABLE_NAME SEMICOLON    { putsym($2, BOOLTYPE); }
+dec: INT  VARIABLE_NAME SEMICOLON    { $$ = dic($2, INTTYPE); }
+   | REAL VARIABLE_NAME SEMICOLON    { $$ = dic($2, REALTYPE); }
+   | BOOL VARIABLE_NAME SEMICOLON    { $$ = dic($2, BOOLTYPE); }
    ;
 
 variable: VARIABLE_NAME             { *((symrec**)&$$) = getsym($1);}
         ;
 
-opt_stmt_list: /* empty */
+opt_stmt_list: /* empty */      {$$ = NULL;}
             | stmt_list
             ;
 

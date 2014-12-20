@@ -21,6 +21,11 @@ typedef struct symrec {
 	struct symrec *next;
 } symrec;
 
+typedef struct {
+    char * name;
+    varTypeEnum type;
+} dicNodeType;
+
 /* Code node tree */
 /* constants */
 typedef struct {
@@ -37,7 +42,7 @@ typedef struct {char * name;} idNodeType;
 
 /* operators */
 typedef struct {
-    char oper;              /* operator */
+    int  oper;              /* operator */
     int  nops;              /* number of operands */
     struct nodeType **op;	/* operands */
 } oprNodeType;
@@ -45,7 +50,7 @@ typedef struct {
 /* used in the struct nodeType to define the type of node*/
 // TODO: delete me
 // typedef enum {typeCon, typeId, typeOpr} nodeEnum;
-typedef enum {nodeCon, nodeId, nodeOpr} nodeEnum;
+typedef enum {nodeDic, nodeCon, nodeId, nodeOpr} nodeEnum;
 typedef struct nodeType{
     nodeEnum type;              /* type of node */
 
@@ -53,19 +58,20 @@ typedef struct nodeType{
         conNodeType con;        /* constants */
         idNodeType id;          /* identifiers */
         oprNodeType opr;        /* operators */
+        dicNodeType dic;        /* declararion  */
     };
 } nodeType;
 
 
-nodeType *con(void *value, varTypeEnum type);
+nodeType * con(void *value, varTypeEnum type);
 nodeType * id(symrec * ide);
 
 
 symrec * getsym(const char * const identifier);
 symrec * putsym(char const * identifier, varTypeEnum type);
 
-
-nodeType *opr(int oper, int nops, ...);
+nodeType * dic(char *, varTypeEnum);
+nodeType * opr(int oper, int nops, ...);
 
 void yyerror(const char *);
 
