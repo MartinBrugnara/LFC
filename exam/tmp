@@ -1,9 +1,14 @@
 main{
     int i;
-    real r;
-    bool b;
+    i = 5;
+    print i;
 
-    print i + r;
+    real r;
+    r = 2,2;
+    print r;
+
+    bool b;
+    b = true;
+
     print i + b;
-    print r + b;
 }
