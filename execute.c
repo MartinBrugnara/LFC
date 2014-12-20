@@ -9,6 +9,7 @@
 // NULL if no return value (eg declaration, assignment).
 typedef conNodeType ret;
 
+// used for ++/-- operations
 nodeType * _ONE = NULL;
 nodeType * ONE() {
     if (_ONE != NULL) return _ONE;
@@ -34,16 +35,17 @@ ret * ex(nodeType *p) {
         return 0;
     }
 
-    printf("[DEBUG] p->type: %d\n", p->type);
+    printf("[DEBUG]\t\tp->type: %d\n", p->type);
     switch(p->type) {
         case nodeDic:
-            printf("[DEBUG]\tEval dic for: %s\n", p->dic.name);
-            // TODO: check if yet exists.
+            if (getsym(p->dic.name)) {
+                fprintf(stderr, "Variable %s was previously declared.", p->dic.name);
+                exit(1);
+            }
             putsym(p->dic.name, p->dic.type);
             return 0;
 
         case nodeCon:
-            printf("[DEBUG]\tEval node con\n");
             {
                 ret * r = xmalloc(sizeof(ret));
                 memcpy(r, &(p->con), sizeof(ret));
@@ -51,15 +53,12 @@ ret * ex(nodeType *p) {
             }
 
         case nodeId:
-            printf("[DEBUG]\tEval node id\n");
             {
                 symrec * s = getsym(p->id.name);
                 if(s == NULL){
                     fprintf(stderr, "There is not such '%s' variable in the symtable\n", p->id.name);
                     exit(1);
                 }
-
-                printf("[DEBUG]\t\tfound of %d with val %d\n", s->type, s->i);
 
                 ret * r = xmalloc(sizeof(ret));
                 r->type = s->type;
@@ -121,14 +120,8 @@ ret * ex(nodeType *p) {
 
 
                 case PRINT:
-                    printf("[DEBUG] printf\n");
                     {
                         ret * to_print = ex(p->opr.op[0]);
-
-                        printf("[DEBUG]\ttype:%d, val:%d\n",
-                                to_print->type,
-                                to_print->i
-                                );
 
                         switch(to_print->type){
                             case INTTYPE:
@@ -150,12 +143,10 @@ ret * ex(nodeType *p) {
                     }
 
                 case SEMICOLON:
-                    printf("[DEBUG]\t\tsemicolon\n");
                     ex(p->opr.op[0]);
                     return ex(p->opr.op[1]);
 
                 case EQ:
-                    printf("[DEBUG]\t\tEQ\n");
                     {
                         symrec * s = getsym(p->opr.op[0]->id.name);
                         if(s == NULL){
@@ -163,7 +154,6 @@ ret * ex(nodeType *p) {
                             exit(1);
                         }
 
-                        printf("[DEBUG]\t\t\teval rigth EQ\n");
                         ret * val = ex(p->opr.op[1]);
 
                         // TODO: INTRODUCE HERE coercion & type checking
@@ -244,9 +234,8 @@ ret * ex(nodeType *p) {
                         ret * b = ex(p->opr.op[1]);
 
                         // TODO: add here type checking
-                        varTypeEnum dstType = max(a->type, b->type);
 
-                        return apply(&lt, a, b, dstType);
+                        return apply(&lt, a, b, BOOLTYPE);
                     }
 
                 case GT:
@@ -255,9 +244,8 @@ ret * ex(nodeType *p) {
                         ret * b = ex(p->opr.op[1]);
 
                         // TODO: add here type checking
-                        varTypeEnum dstType = max(a->type, b->type);
 
-                        return apply(&gt, a, b, dstType);
+                        return apply(&gt, a, b, BOOLTYPE);
                     }
 
                 case GTE:
@@ -266,9 +254,8 @@ ret * ex(nodeType *p) {
                         ret * b = ex(p->opr.op[1]);
 
                         // TODO: add here type checking
-                        varTypeEnum dstType = max(a->type, b->type);
 
-                        return apply(&gte, a, b, dstType);
+                        return apply(&gte, a, b, BOOLTYPE);
                     }
 
                 case LTE:
@@ -277,9 +264,8 @@ ret * ex(nodeType *p) {
                         ret * b = ex(p->opr.op[1]);
 
                         // TODO: add here type checking
-                        varTypeEnum dstType = max(a->type, b->type);
 
-                        return apply(&lte, a, b, dstType);
+                        return apply(&lte, a, b, BOOLTYPE);
                     }
 
                 case NE:
@@ -290,7 +276,7 @@ ret * ex(nodeType *p) {
                         // TODO: add here type checking
                         varTypeEnum dstType = max(a->type, b->type);
 
-                        return apply(&neq, a, b, dstType);
+                        return apply(&neq, a, b, BOOLTYPE);
                     }
 
                 case DEQ:
@@ -299,10 +285,36 @@ ret * ex(nodeType *p) {
                         ret * b = ex(p->opr.op[1]);
 
                         // TODO: add here type checking
-                        varTypeEnum dstType = max(a->type, b->type);
 
-                        return apply(&deq, a, b, dstType);
+                        return apply(&deq, a, b, BOOLTYPE);
                     }
+
+                 case AND:{
+                        ret* a = ex(p->opr.op[0]);
+                        ret* b = ex(p->opr.op[1]);
+                        
+                        // TODO: add here type checking
+
+                        return apply(&and, a, b, BOOLTYPE);
+                 }
+
+                 case OR:{
+                        ret* a = ex(p->opr.op[0]);
+                        ret* b = ex(p->opr.op[1]);
+                        
+                        // TODO: add here type checking
+
+                        return apply(&or, a, b, BOOLTYPE);
+                 }
+
+                 case NOT:{
+                        ret* a = ex(p->opr.op[0]);
+                        
+                        // TODO: add here type checking
+
+                        return apply(&not, a, NULL, BOOLTYPE);
+                 }
+
                 default:
                     fprintf(stderr, "Operator not matched\n");
                     exit(1);

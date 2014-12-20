@@ -1,0 +1,38 @@
+int a;
+real b;
+
+main {
+    a = 3;
+    b = 9,0;
+
+    real c;
+    c = a + b;
+    print c;
+    print 12,0;
+
+    c = a-b;
+    print c;
+    print -6,0;
+
+    c = a/b;
+    print c;
+
+    c = b/a;
+    print c;
+
+    c = a*b;
+    print c;
+
+    c = b*a;
+    print c;
+
+    print 69;
+
+
+    bool z;
+    z = a == b;
+    print a;
+
+    z = a <= b;
+    print z;
+}

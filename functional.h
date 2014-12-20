@@ -18,6 +18,10 @@ float lte(float a, float b);
 float deq(float a, float b);
 float neq(float a, float b);
 
+float and(float a, float b);
+float or(float a, float b);
+float not(float a, float b);
+
 varTypeEnum max(varTypeEnum a, varTypeEnum b);
 conNodeType * apply(mappable f, conNodeType * a, conNodeType * b, varTypeEnum dstType);
 

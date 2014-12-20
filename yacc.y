@@ -39,14 +39,16 @@
 %token <bVal> BOOLEAN
 %token <varName> VARIABLE_NAME
 
-%token WHILE IF PRINT FOR TO INT REAL BOOL
+%token WHILE IF PRINT FOR TO INT REAL BOOL AND OR NOT
 %nonassoc IFX
 %nonassoc ELSE
 
 %left EQ
+%left AND OR
 %left DEQ NE GT LT GTE LTE
 %left PLUS MIN
 %left MUL DIV
+%right NOT
 %nonassoc UMINUS RCURLY LCURLY LP RP COMMA SEMICOLON INTEGER REALNUM BOOLEAN MAIN
 
 %type <nPtr> stmt dec expr stmt_list opt_stmt_list opt_dec_list variable
@@ -116,6 +118,9 @@ expr: INTEGER               {$$ = con(&$1, INTTYPE);} //manage constants
     | expr NE expr          {$$ = opr(NE,2,$1,$3);}
     | expr DEQ expr         {$$ = opr(DEQ,2,$1,$3);}
     | LP expr RP            {$$ = $2;}
+    | expr AND expr         {$$ = opr(AND,2,$1,$3);}
+    | expr OR expr          {$$ = opr(OR,2,$1,$3);}
+    | NOT expr              {$$ = opr(NOT,1,$2);}
     ;
 
 %%

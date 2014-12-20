@@ -16,6 +16,10 @@
 "=="            return DEQ;
 "!="            return NE;
 
+"||"            return OR; // Boolean expression evaluation
+"and"           return AND;
+"not"           return NOT;
+
 "while"         return WHILE; // Start of Flow Control
 "if"            return IF;
 "else"          return ELSE;
@@ -40,7 +44,7 @@
         }
 
 
-[a-zA-Z][a-zA-Z_]*  { // Get or create variable
+[a-zA-Z][a-zA-Z0-9_]*  { // Get or create variable
                         // var name + \0
                         yylval.varName = (char *)xmalloc(strlen(yytext) + 1);
                         // strcpy also copy \0
