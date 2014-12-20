@@ -4,15 +4,17 @@ main{
     print 1*1;
     print 1/1;
 
-    print 1<1;
-    print 1>1;
+    print 1<2;
+    print 1>2;
     print 1<=1;
     print 1>=1;
     print 1==1;
     print 1!=1;
 
+    print 69;
+
     real realExpr;
-    realExpr = (10,0+6,0)/((10,0/2,0)+(-2,0));
+    realExpr = (10+6)/(-2,0);
     print realExpr;
 
     bool booleanExpr;
@@ -20,9 +22,5 @@ main{
     print booleanExpr;
 
     print (1);
-    print (1==1)||(false);
-
-    print (1<9)||(not (2+2)<(4/4));
-    print (1<9)and(not (2+2)<(4/4));
-    print (not (2+2)<(4/4));
+    print (1==1)||(false);   
 }
