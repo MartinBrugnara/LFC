@@ -21,6 +21,7 @@ float or(float a, float b) {return a || b;}
 float not(float a, float b) {return !a;}
 
 varTypeEnum max(varTypeEnum a, varTypeEnum b) {return a>b?a:b;}
+varTypeEnum min(varTypeEnum a, varTypeEnum b) {return a<b?a:b;}
 
 conNodeType * apply(mappable f, conNodeType * a, conNodeType * b, varTypeEnum dstType) {
     conNodeType * res = xmalloc(sizeof(conNodeType*));
@@ -52,4 +53,3 @@ conNodeType * apply(mappable f, conNodeType * a, conNodeType * b, varTypeEnum ds
 
     return res;
 }
-
