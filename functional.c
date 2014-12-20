@@ -5,7 +5,7 @@ float ass(float a, float b) {return a;}
 float neg(float a, float b) {return -a;}
 
 float sum(float a, float b) {return a + b;}
-float min(float a, float b) {return a - b;}
+float mni(float a, float b) {return a - b;}
 float mul(float a, float b) {return a * b;}
 float dvi(float a, float b) {return a / b;} // DIV was yet taken
 

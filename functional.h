@@ -7,7 +7,7 @@ float ass(float a, float b);
 float neg(float a, float b);
 
 float sum(float a, float b);
-float min(float a, float b);
+float mni(float a, float b);
 float mul(float a, float b);
 float dvi(float a, float b);
 
