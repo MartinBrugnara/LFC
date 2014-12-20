@@ -79,7 +79,6 @@ nodeType * id(const char * const name){
 
 // Search in Symbol Table (that is a fucking list) O(n)
 symrec * getsym(const char * const name) {
-    printf("[DEBUG] Retrieving %s\n", name);
     for (symrec *ptr = symTable; ptr != NULL; ptr=(symrec *)ptr->next){
         if (!strcmp(ptr->name, name)) {
             return ptr; // found
@@ -89,7 +88,6 @@ symrec * getsym(const char * const name) {
 }
 
 symrec * putsym(char const * identifier, varTypeEnum type) {
-    printf("[DEBUG] Registering %s with type: %d\n", identifier, type);
     symrec *ptr = (symrec *)xmalloc(sizeof (symrec));
     ptr->name = (char *) xmalloc (strlen (identifier) + 1);
     strcpy (ptr->name,identifier);

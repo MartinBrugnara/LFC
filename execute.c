@@ -13,21 +13,18 @@ typedef conNodeType ret;
 nodeType * __ONE = 0;
 nodeType * ONE() {
     if (!__ONE) {
-        printf("init one");
         int uno = 1;
         __ONE = con(&uno, INTTYPE);
     }
-        printf("ret one\n");
-
     return __ONE;
 }
 
 // [dst][src]
 char coercion_table[3][3] = {
     // B, I, R
-    {1,1,0}, // B
-    {0,1,0}, // I
-    {0,1,1}, // R
+      {1, 1, 0}, // B
+      {0, 1, 0}, // I
+      {0, 1, 1}, // R
 };
 
 // Cast if we can
@@ -36,32 +33,42 @@ conNodeType * coercion(conNodeType * a, varTypeEnum req) {
 
     if (a->type == req) return a; // easy case
 
-    if (!coercion_table[req][a->type]) yyerror("Incompatible type (coercion failed).");
+    if (!coercion_table[req][a->type]) yyerror("Incompatible type.");
 
-    conNodeType * n = a;
     switch (req) {
         case INTTYPE:
-            switch (n->type) {
-                case INTTYPE: break;
-                case REALTYPE: n->i = (int)n->r; break;
-                case BOOLTYPE: n->i = (int)n->b; break;
+            {
+                int tmp;
+                switch (a->type) {
+                    case INTTYPE:   tmp = (int)a->i; break;
+                    case REALTYPE:  tmp = (int)a->r; break;
+                    case BOOLTYPE:  tmp = (int)a->b; break;
+                }
+                a->i = tmp;
+                break;
             }
-            break;
         case REALTYPE:
-            switch (n->type) {
-                case INTTYPE:  n->r = (float)n->i; break;
-                case REALTYPE: break;
-                case BOOLTYPE: n->r = (float)n->b; break;
+            {
+                float tmp;
+                switch (a->type) {
+                    case INTTYPE:  tmp = (float)a->i; break;
+                    case REALTYPE: tmp = (float)a->r; break;
+                    case BOOLTYPE: tmp = (float)a->b; break;
+                }
+                a->r = tmp;
+                break;
             }
-            break;
-
         case BOOLTYPE:
-            switch (n->type) {
-                case INTTYPE:  n->b = n->i != 0; break;
-                case REALTYPE: n->b = n->r != 0; break;
-                case BOOLTYPE: break;
+            {
+                int tmp;
+                switch (a->type) {
+                    case INTTYPE:  tmp = a->i != 0; break;
+                    case REALTYPE: tmp = a->r != 0; break;
+                    case BOOLTYPE: tmp = a->b != 0; break;
+                }
+                a->b = tmp;
+                break;
             }
-            break;
     }
     a->type = req;
     return a;
@@ -73,12 +80,8 @@ conNodeType * coercion(conNodeType * a, varTypeEnum req) {
  */
 ret * ex(nodeType *p) {
     // Early exit on EOTree.
-    if (!p){
-        printf("[DEBUG] p is null\n");
-        return 0;
-    }
+    if (!p) return 0;
 
-    printf("[DEBUG]\t\tp->type: %d\n", p->type);
     switch(p->type) {
         case nodeDic:
             if (getsym(p->dic.name)) {
@@ -123,7 +126,6 @@ ret * ex(nodeType *p) {
             }
 
         case nodeOpr:
-            printf("[DEBUG] operator %d\n", p->opr.oper);
             {
                 // Used for expr
                 mappable f = NULL;
@@ -132,11 +134,9 @@ ret * ex(nodeType *p) {
 
                 switch(p->opr.oper) {
                     case WHILE:
-                        {
-                            while(coercion(ex(p->opr.op[0]), BOOLTYPE)->b)
-                                ex(p->opr.op[1]);
-                            return 0;
-                        }
+                        while(coercion(ex(p->opr.op[0]), BOOLTYPE)->b)
+                            ex(p->opr.op[1]);
+                        return 0;
 
                     case FOR:
                         {
@@ -235,14 +235,10 @@ ret * ex(nodeType *p) {
 
                             ret * n = ex(p->opr.op[1]);
 
-                            printf("Trying [%d][%d]\n", s->type , n->type);
-                            printf("Is %d\n", coercion_table[s->type][n->type]);
-
                             // real = int
                             if (!coercion_table[s->type][n->type])
                                 yyerror("Incompatible type assignment.");
 
-                            printf("Assigning %d to %d\n", n->type , s->type);
                             switch (s->type) {
                                 case INTTYPE:
                                     switch (n->type) {
@@ -270,42 +266,55 @@ ret * ex(nodeType *p) {
                             return n;
                         }
 
-                    case UMINUS:
-                        {
-                            ret * a = ex(p->opr.op[0]);
-                            coercion(a, min(a->type, INTTYPE));
-                            return apply(&neg, a, NULL, a->type);
-                        }
 
+                    case UMINUS: f = f != NULL ? f : &neg;
                     case PLUS: f = f != NULL ? f : &sum;
                     case MIN:  f = f != NULL ? f : &mni;
                     case MUL:  f = f != NULL ? f : &mul;
                     case DIV:  f = f != NULL ? f : &dvi;
-                        flag = 1;
+                        flag = 3;
 
                     case LT:   f = f != NULL ? f : &lt;
                     case GT:   f = f != NULL ? f : &gt;
                     case GTE:  f = f != NULL ? f : &gte;
                     case LTE:  f = f != NULL ? f : &lte;
+                        flag = max(flag, 2);
+
+                    case NE:  f = f != NULL ? f : &neq;
+                    case DEQ: f = f != NULL ? f : &deq;
+                        flag = max(flag, 1);
 
                     case AND: f = f != NULL ? f : &and;
                     case OR:  f = f != NULL ? f : &or;
                     case NOT: f = f != NULL ? f : &not;
+                        flag = max(flag, 0);
+                        {
+                            varTypeEnum
+                                retType = BOOLTYPE,
+                                valType = BOOLTYPE;
 
-                    case NE:  f = f != NULL ? f : &neq;
-                    case DEQ: f = f != NULL ? f : &deq;
-                              {
-                                  varTypeEnum dstType = BOOLTYPE;
-                                  a= ex(p->opr.op[0]);
-                                  b= p->opr.nops == 2 ?  ex(p->opr.op[1]) : NULL;
-                                  if (flag) dstType = max(a->type, b->type);
-                                  return apply(
-                                          f,
-                                          coercion(a, dstType),
-                                          coercion(b, dstType),
-                                          dstType
-                                          );
-                              }
+                            a = ex(p->opr.op[0]);
+                            b = p->opr.nops == 2 ? ex(p->opr.op[1]) : NULL;
+
+                            switch (flag) {
+                                case 3:
+                                    valType = retType = max(b ? max(a->type, b->type) : a->type, INTTYPE);
+                                    break;
+                                case 2:
+                                    valType = max(b ? max(a->type, b->type) : a->type, INTTYPE);
+                                    break;
+                                case 1:
+                                    valType = b ? max(a->type, b->type) : a->type;
+                                    break;
+                            }
+
+                            return apply(
+                                    f,
+                                    coercion(a, valType),
+                                    coercion(b, valType),
+                                    retType
+                                    );
+                        }
                     default:
                         yyerror("Operator not matched.");
                 }
