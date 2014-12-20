@@ -1,6 +1,5 @@
 int q;
 main {
    int a;
-   real b;
-   bool c;
+   a = 2;
 }

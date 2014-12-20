@@ -24,11 +24,15 @@ void * xmalloc(size_t size) {
 
 /* Create a declaration node */
 nodeType * dic(char * name, varTypeEnum type) {
+    printf("XXX dic\n");
+    /*
     if (getsym(name) != NULL) {
         // Yet in SymT
         fprintf(stderr, "This variable was previously declared %s\n", name);
         exit(1);
-    }
+    }*/
+
+    printf("XXX dic after getsym\n");
 
     nodeType *p = (nodeType*)xmalloc(sizeof(nodeType));
 
@@ -36,11 +40,14 @@ nodeType * dic(char * name, varTypeEnum type) {
     p->dic.name = (char*)xmalloc(sizeof(strlen(name) + 1));
     strcpy(p->dic.name, name);
     p->dic.type = type;
+    printf("XXX dic pre return\n");
     return p;
 }
 
 /* Create a node containing a constant value */
 nodeType * con(void *value, varTypeEnum type){
+    printf("XXX con\n");
+
     nodeType *p = (nodeType*)xmalloc(sizeof(nodeType));
 
     /* copy information */
@@ -61,29 +68,40 @@ nodeType * con(void *value, varTypeEnum type){
     return p;
 }
 
-/* Create and Identifier Node (reference) for a variable.
+/* Wrap symrec ref into a id node
  * Also checks that the var has been yet declared.
  */
-nodeType * id(symrec * ide){
-    if (getsym(ide->name) == NULL) {
+nodeType * id(const char * const name){
+    printf("XXX id\n");
+
+
+    printf("XXX retrieving var %s\n", name);
+    /*
+    if (getsym(name) == NULL) {
         // Symbol not yet in SymT
-        fprintf(stderr, "Undeclared variable %s\n", ide->name);
+        fprintf(stderr, "Undeclared variable %s\n", name);
         exit(1);
-    }
+    }*/
+
+    printf("XXX post for id\n");
 
     nodeType * p = (nodeType*)xmalloc(sizeof(nodeType));
     p->type      = nodeId;
-    p->id.name   = (char*)xmalloc(sizeof(strlen(ide->name)) + 1);
-    strcpy(p->id.name, ide->name);
+    p->id.name   = (char*)xmalloc(sizeof(strlen(name)) + 1);
+    strcpy(p->id.name, name);
 
+    printf("XXX exit id\n");
     return p;
 }
 
 // Search in Symbol Table (that is a fucking list) O(n)
-symrec * getsym(const char * const identifier) {
+symrec * getsym(const char * const name) {
+    printf("getting %s, symtable is %d\n", name, symTable);
     for (symrec *ptr = symTable; ptr != NULL; ptr=(symrec *)ptr->next){
-        if (!strcmp(ptr->name, identifier))
+        printf("len: %s | %s", ptr->name, name);
+        if (!strcmp(ptr->name, name)) {
             return ptr; // found
+        }
     }
     return NULL; // not found
 }
@@ -91,10 +109,11 @@ symrec * getsym(const char * const identifier) {
 symrec * putsym(char const * identifier, varTypeEnum type) {
     printf("registering %s\n", identifier);
     symrec *ptr = (symrec *)xmalloc(sizeof (symrec));
-    ptr->name = (char *) malloc (strlen (identifier) + 1);
+    ptr->name = (char *) xmalloc (strlen (identifier) + 1);
     strcpy (ptr->name,identifier);
     ptr->type = type;
     ptr->next = symTable; // add in head O(1)
+    ptr->b=ptr->r=ptr->i=0;
     symTable = ptr;
     return ptr;
 }
@@ -105,6 +124,7 @@ symrec * putsym(char const * identifier, varTypeEnum type) {
  * ... : operands *xargs of *nodeType
  */
 nodeType *opr(int oper, int nops, ...){
+    printf("XXX opr\n");
 
     nodeType *p = (nodeType*)xmalloc(sizeof(nodeType));
     p->type     = nodeOpr;

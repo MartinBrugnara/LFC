@@ -36,6 +36,7 @@ ret * ex(nodeType *p) {
     switch(p->type) {
         case nodeDic:
             printf("[DEBUG]\tEval dic for: %s\n", p->dic.name);
+            // TODO: check if yet exists.
             putsym(p->dic.name, p->dic.type);
             return 0;
 
@@ -144,17 +145,20 @@ ret * ex(nodeType *p) {
                     return ex(p->opr.op[1]);
 
                 case EQ:
+                    printf("[DEBUG]\t\tEQ\n");
                     {
                         symrec * s = getsym(p->opr.op[0]->id.name);
                         if(s == NULL){
                             fprintf(stderr, "There is not such '%s' varibale in the symtable\n", p->opr.op[0]->id.name);
-                            exit(0);
+                            exit(1);
                         }
 
+                        printf("[DEBUG]\t\t\teval rigth EQ\n");
                         ret * val = ex(p->opr.op[1]);
 
                         // TODO: INTRODUCE HERE coercion & type checking
 
+                        printf("[DEBUG]\t\t\tseitch oever type\n");
                         s->type = val->type;
                         switch(val->type){
                             case INTTYPE:
