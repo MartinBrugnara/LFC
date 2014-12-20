@@ -52,6 +52,7 @@ nodeType * con(void *value, varTypeEnum type){
 
     /* copy information */
     p->type = nodeCon;
+    p->con.type = type;
     switch (type) {
         case INTTYPE:
             p->con.i = *(int*)value;
@@ -98,7 +99,7 @@ nodeType * id(const char * const name){
 symrec * getsym(const char * const name) {
     printf("getting %s, symtable is %d\n", name, symTable);
     for (symrec *ptr = symTable; ptr != NULL; ptr=(symrec *)ptr->next){
-        printf("len: %s | %s", ptr->name, name);
+        printf("cmp: %s | %s\n", ptr->name, name);
         if (!strcmp(ptr->name, name)) {
             return ptr; // found
         }
@@ -107,7 +108,7 @@ symrec * getsym(const char * const name) {
 }
 
 symrec * putsym(char const * identifier, varTypeEnum type) {
-    printf("registering %s\n", identifier);
+    printf("registering %s with type: %d\n", identifier, type);
     symrec *ptr = (symrec *)xmalloc(sizeof (symrec));
     ptr->name = (char *) xmalloc (strlen (identifier) + 1);
     strcpy (ptr->name,identifier);
