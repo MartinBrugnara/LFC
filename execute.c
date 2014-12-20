@@ -32,6 +32,8 @@ char coercion_table[3][3] = {
 
 // Cast if we can
 conNodeType * coercion(conNodeType * a, varTypeEnum req) {
+    if (!a) return NULL;
+
     if (a->type == req) return a; // easy case
 
     if (!coercion_table[req][a->type]) yyerror("Incompatible type (coercion failed).");
@@ -263,11 +265,10 @@ ret * ex(nodeType *p) {
                             return n;
                         }
 
-                    // TODO: introduce here coercion
                     case UMINUS:
                         {
                             ret * a = ex(p->opr.op[0]);
-                            if (a->type == BOOLTYPE) yyerror("[ERROR] Boolean type in number context");
+                            coercion(a, min(a->type, INTTYPE));
                             return apply(&neg, a, NULL, a->type);
                         }
 
@@ -306,6 +307,8 @@ ret * ex(nodeType *p) {
                         if (error || a->type != b->type)
                                 yyerror("Incompatible type");
 
+                        coercion(a, dstType);
+                        coercion(b, dstType);
                         return apply(f, a, b, dstType);
 
                     default:
