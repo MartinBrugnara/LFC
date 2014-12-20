@@ -1,0 +1,41 @@
+bool c1;
+bool c2;
+bool c3;
+bool c4;
+bool c5;
+bool c6;
+real r;
+int a;
+int b;
+
+main{
+    a = 42;
+    b = 24;
+
+    r = 42,42;
+    r = 24,24;
+
+    c1 = a > r;
+    c2 = a >= r;
+    c3 = a < r;
+    c4 = a <= r;
+    c5 = a == r;
+    c6 = a != r;
+    
+    print c1;
+    print c2;
+    print c3;
+    print c4;
+    print c5;
+    print c6;
+
+    print a + b;
+    print a - b;
+    print a * b;
+    print a / b;
+
+    print a + a;
+    print a - a;
+    print a * a;
+    print a / a;
+}

@@ -1,0 +1,11 @@
+bool a;
+bool b;
+bool c;
+main {
+    a = true;
+    b = true;
+    c = a and b;
+    print c;
+    b = not a;
+    print a || not b;
+}

@@ -1,0 +1,13 @@
+int a;
+bool b;
+real c;
+
+main {
+    a = (3 + 7) * 2;
+    print a + 10;
+    print (a*17);
+    b = true;
+    print b;
+    c = 2,7854 * (777 / 19);
+    print c;
+}

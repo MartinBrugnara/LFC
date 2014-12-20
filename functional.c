@@ -16,6 +16,9 @@ float lte(float a, float b) {return a <= b;}
 float deq(float a, float b) {return a == b;}
 float neq(float a, float b) {return a != b;}
 
+float and(float a, float b) {return a && b;}
+float or(float a, float b) {return a || b;}
+float not(float a, float b) {return !a;}
 
 varTypeEnum max(varTypeEnum a, varTypeEnum b) {return a>b?a:b;}
 
@@ -32,7 +35,7 @@ conNodeType * apply(mappable f, conNodeType * a, conNodeType * b, varTypeEnum ds
 
     float snd;
     if (b) // OPTIONAL
-        switch (a->type) {
+        switch (b->type) {
             case INTTYPE:   snd = (float)(b->i);break;
             case REALTYPE:  snd = (float)(b->r);break;
             case BOOLTYPE:  snd = (float)(b->b);break;
