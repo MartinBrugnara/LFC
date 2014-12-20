@@ -24,6 +24,8 @@
 "if"            return IF;
 "else"          return ELSE;
 "print"         return PRINT;
+"printInt"		return PRINTINT;
+"printReal"		return PRINTREAL;
 "for"           return FOR;
 "to"            return TO;
 
