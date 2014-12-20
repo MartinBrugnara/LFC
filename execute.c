@@ -24,10 +24,10 @@ nodeType * ONE() {
 
 // [dst][src]
 char coercion_table[3][3] = {
-    // I, R, B
-    {1,0,0}, // I
-    {1,1,0}, // R
-    {1,0,1}, // B
+    // B, I, R
+    {1,1,0}, // B
+    {0,1,0}, // I
+    {0,1,1}, // R
 };
 
 // Cast if we can
@@ -128,7 +128,7 @@ ret * ex(nodeType *p) {
                 // Used for expr
                 mappable f = NULL;
                 ret * a = NULL , * b = NULL;
-                int mod = 0;
+                int flag = 0;
 
                 switch(p->opr.oper) {
                     case WHILE:
@@ -235,33 +235,38 @@ ret * ex(nodeType *p) {
 
                             ret * n = ex(p->opr.op[1]);
 
+                            printf("Trying [%d][%d]\n", s->type , n->type);
+                            printf("Is %d\n", coercion_table[s->type][n->type]);
+
+                            // real = int
                             if (!coercion_table[s->type][n->type])
                                 yyerror("Incompatible type assignment.");
+
+                            printf("Assigning %d to %d\n", n->type , s->type);
                             switch (s->type) {
                                 case INTTYPE:
                                     switch (n->type) {
-                                        case INTTYPE: break;
-                                        case REALTYPE: n->i = (int)n->r; break;
-                                        case BOOLTYPE: n->i = (int)n->b; break;
+                                        case INTTYPE:  s->i = n->i; break;
+                                        case REALTYPE: s->i = (int)n->r; break;
+                                        case BOOLTYPE: s->i = (int)n->b; break;
                                     }
                                     break;
                                 case REALTYPE:
                                     switch (n->type) {
-                                        case INTTYPE:  n->r = (float)n->i; break;
-                                        case REALTYPE: break;
-                                        case BOOLTYPE: n->r = (float)n->b; break;
+                                        case INTTYPE:  s->r = (float)n->i; break;
+                                        case REALTYPE: s->r = n->r; break;
+                                        case BOOLTYPE: s->r = (float)n->b; break;
                                     }
                                     break;
 
                                 case BOOLTYPE:
                                     switch (n->type) {
-                                        case INTTYPE:  n->b = n->i != 0; break;
-                                        case REALTYPE: n->b = n->r != 0; break;
-                                        case BOOLTYPE: break;
+                                        case INTTYPE:  s->b = n->i != 0; break;
+                                        case REALTYPE: s->b = n->r != 0; break;
+                                        case BOOLTYPE: s->b = n->b; break;
                                     }
                                     break;
                             }
-                            n->type = s->type;
                             return n;
                         }
 
@@ -276,41 +281,31 @@ ret * ex(nodeType *p) {
                     case MIN:  f = f != NULL ? f : &mni;
                     case MUL:  f = f != NULL ? f : &mul;
                     case DIV:  f = f != NULL ? f : &dvi;
-                        mod = 1; // number -> number
+                        flag = 1;
 
                     case LT:   f = f != NULL ? f : &lt;
                     case GT:   f = f != NULL ? f : &gt;
                     case GTE:  f = f != NULL ? f : &gte;
                     case LTE:  f = f != NULL ? f : &lte;
-                        mod = mod ? mod : 2; // number -> bool
+
                     case AND: f = f != NULL ? f : &and;
                     case OR:  f = f != NULL ? f : &or;
                     case NOT: f = f != NULL ? f : &not;
-                        mod = mod ? mod : 3; // bool -> bool
+
                     case NE:  f = f != NULL ? f : &neq;
                     case DEQ: f = f != NULL ? f : &deq;
-                        a = ex(p->opr.op[0]);
-                        b = ex(p->opr.op[1]);
-
-                        int error = 0;
-                        varTypeEnum dstType = BOOLTYPE;
-
-                        switch (mod) {
-                            case 1: // number -> number
-                                dstType = max(a->type, b->type);
-                            case 2: // number -> bool
-                                error = a->type == BOOLTYPE;
-                                break;
-                            case 3: // bool -> bool
-                                error = a->type != BOOLTYPE;
-                        }
-                        if (error || a->type != b->type)
-                                yyerror("Incompatible type");
-
-                        coercion(a, dstType);
-                        coercion(b, dstType);
-                        return apply(f, a, b, dstType);
-
+                              {
+                                  varTypeEnum dstType = BOOLTYPE;
+                                  a= ex(p->opr.op[0]);
+                                  b= p->opr.nops == 2 ?  ex(p->opr.op[1]) : NULL;
+                                  if (flag) dstType = max(a->type, b->type);
+                                  return apply(
+                                          f,
+                                          coercion(a, dstType),
+                                          coercion(b, dstType),
+                                          dstType
+                                          );
+                              }
                     default:
                         yyerror("Operator not matched.");
                 }
