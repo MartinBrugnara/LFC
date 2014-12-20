@@ -3,11 +3,42 @@ bool b;
 real c;
 
 main {
+	;
+
 	int a1;
+	bool b1;
+	real c1;
+
+	3+2;
+	3,7*11,15;
+
+	print 3+5;
 	a1 = 5;
-	print a1;
-	while(true < false){
+	b1 = true;
+	c1 = 65,78;
+
+	while(a1 < 7){
 		a1 = a1 + 1;
 		print a1;
+	}
+	print a1;
+	print a1 == 5;
+	if(a1 == 5){
+		print a1;
+	}
+
+	if(a1 == 7){
+		print a1;
+	} else {
+		print c1;
+	}
+
+	int y;
+	for(y = 0 to 15){
+		print y;
+	}
+
+	{
+		int r; int t; bool p; real wq;
 	}
 }

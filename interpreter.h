@@ -48,9 +48,7 @@ typedef struct {
 } oprNodeType;
 
 /* used in the struct nodeType to define the type of node*/
-// TODO: delete me
-// typedef enum {typeCon, typeId, typeOpr} nodeEnum;
-typedef enum {nodeDic, nodeCon, nodeId, nodeOpr, /*nodeBlock*/} nodeEnum;
+typedef enum {nodeDic, nodeCon, nodeId, nodeOpr, nodeBlock} nodeEnum;
 typedef struct nodeType{
     nodeEnum type;              /* type of node */
 
@@ -59,10 +57,11 @@ typedef struct nodeType{
         idNodeType id;          /* identifiers */
         oprNodeType opr;        /* operators */
         dicNodeType dic;        /* declararion  */
-//        symrec * EBP;           /* scooping and procedure */
+        struct nodeType * blk;         /* scooping and procedure */
     };
 } nodeType;
 
+nodeType * block(nodeType * next);
 nodeType * con(void *value, varTypeEnum type);
 nodeType * id(const char * const);
 

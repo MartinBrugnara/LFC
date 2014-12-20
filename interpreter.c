@@ -18,15 +18,16 @@ void * xmalloc(size_t size) {
     return p;
 }
 
+nodeType * block(nodeType * next) {
+    nodeType *p = (nodeType*)xmalloc(sizeof(nodeType));
+    p->type = nodeBlock;
+    p->blk = next;
+    return p;
+}
+
+
 /* Create a declaration node */
 nodeType * dic(char * name, varTypeEnum type) {
-    /*
-    if (getsym(name) != NULL) {
-        // Yet in SymT
-        fprintf(stderr, "This variable was previously declared %s\n", name);
-        exit(1);
-    }*/
-
     nodeType *p = (nodeType*)xmalloc(sizeof(nodeType));
 
     p->type = nodeDic;

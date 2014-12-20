@@ -1,0 +1,18 @@
+int a;
+
+main {
+	a = 75;
+	print a;
+
+	{
+		real c;
+		c =  7,78;
+		print c;
+		bool g;
+		g = true;
+	}
+
+	print c;
+	print g;
+	print a;
+}
