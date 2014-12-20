@@ -22,8 +22,25 @@ void * xmalloc(size_t size) {
     return p;
 }
 
+/* Create a declaration node */
+nodeType * dic(char * name, varTypeEnum type) {
+    if (getsym(name) != NULL) {
+        // Yet in SymT
+        fprintf(stderr, "This variable was previously declared %s\n", name);
+        exit(1);
+    }
+
+    nodeType *p = (nodeType*)xmalloc(sizeof(nodeType));
+
+    p->type = nodeDic;
+    p->dic.name = (char*)xmalloc(sizeof(strlen(name) + 1));
+    strcpy(p->dic.name, name);
+    p->dic.type = type;
+    return p;
+}
+
 /* Create a node containing a constant value */
-nodeType *con(void *value, varTypeEnum type){
+nodeType * con(void *value, varTypeEnum type){
     nodeType *p = (nodeType*)xmalloc(sizeof(nodeType));
 
     /* copy information */
@@ -44,17 +61,21 @@ nodeType *con(void *value, varTypeEnum type){
     return p;
 }
 
-/* Get or Create a Variable in Symbol Table. Key = id. */
+/* Create and Identifier Node (reference) for a variable.
+ * Also checks that the var has been yet declared.
+ */
 nodeType * id(symrec * ide){
+    if (getsym(ide->name) == NULL) {
+        // Symbol not yet in SymT
+        fprintf(stderr, "Undeclared variable %s\n", ide->name);
+        exit(1);
+    }
+
     nodeType * p = (nodeType*)xmalloc(sizeof(nodeType));
-    p->type = nodeId;
-    p->id.name = (char*)xmalloc(sizeof(strlen(ide->name)) + 1);
+    p->type      = nodeId;
+    p->id.name   = (char*)xmalloc(sizeof(strlen(ide->name)) + 1);
     strcpy(p->id.name, ide->name);
 
-    if (getsym(ide->name) == NULL) { // Symbol not yet in SymT
-        fprintf(stderr, "Undeclared variable %s\n", ide->name);
-        //putsym(p->id.name);
-    }
     return p;
 }
 
@@ -79,27 +100,26 @@ symrec * putsym(char const * identifier, varTypeEnum type) {
 }
 
 /* Create a operand node
- * oper: operand
+ * oper: operator
  * nops: #operands
+ * ... : operands *xargs of *nodeType
  */
 nodeType *opr(int oper, int nops, ...){
-    /* (ap = argument pointer) va_list is used to declare a variable
-            which, from time to time, is referring to an argument*/
-    va_list ap;
 
-    nodeType *p;
-
-    p = (nodeType*)xmalloc(sizeof(nodeType));
-    p->opr.op = (struct nodeType**)xmalloc(nops*sizeof(nodeType));
-
+    nodeType *p = (nodeType*)xmalloc(sizeof(nodeType));
     p->type     = nodeOpr;
+
+    p->opr.op = (nodeType**)xmalloc(nops*sizeof(nodeType));
+
     p->opr.oper = oper;
     p->opr.nops = nops;
 
-    // *args (list) -> p->opr.op (array)
+    /* (ap = argument pointer) va_list is used to declare a variable
+            which, from time to time, is referring to an argument*/
+    va_list ap;
     va_start(ap, nops);
     for(int i=0; i<nops; i++)
-        p->opr.op[i]=va_arg(ap,nodeType*);
+        p->opr.op[i] = va_arg(ap, nodeType*);
     va_end(ap);
 
     return p;

@@ -53,14 +53,14 @@
                     return INTEGER;
                 }
 
-([1-9][0-9]*,[0-9]+)    { // Parse the whole string and replace ',' the atof
+(0,|[1-9][0-9]*,[0-9]+)    { // Parse the whole string and replace ',' the atof
                             char * f = (char *) xmalloc(strlen(yytext) + 1);
                             strcpy(f, yytext);
 
                             // We are sure ',' is in there.
-                            int i;
-                            for(i=0; f[i] != ','; i++);
-                            f[i] = '.';
+                            char * c = f;
+                            for(; *c != ','; c++);
+                            *c = '.';
 
                             yylval.rVal = atof(f);
 

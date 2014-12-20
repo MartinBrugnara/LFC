@@ -1,4 +1,5 @@
 #include <stdlib.h>
+#include <string.h>
 #include <stdio.h>
 #include "interpreter.h"
 #include "functional.h"
@@ -27,35 +28,27 @@ nodeType * ONE() {
  * Return node evaluation.
  */
 ret * ex(nodeType *p) {
-    ret * retv = NULL;
-
     // Early exit on EOTree.
+    printf("[DEBUG] p is null\n");
     if (!p) return 0;
 
-    printf("type: %d\n", p->type);
+    printf("[DEBUG] p->type: %d\n", p->type);
     switch(p->type) {
+        case nodeDic:
+            printf("[DEBUG]\tEval dic for: %s\n", p->dic.name);
+            putsym(p->dic.name, p->dic.type);
+            return 0;
 
         case nodeCon:
-            // assert conNodeType
-            retv = xmalloc(sizeof(ret));
-            retv->type = p->con.type;
-            switch(p->con.type){
-                case INTTYPE:
-                    retv->i = p->con.i;
-                    break;
-                case REALTYPE:
-                    retv->r = p->con.r;
-                    break;
-                case BOOLTYPE:
-                    retv->b = p->con.b;
-                    break;
-                default:
-                    yyerror("Unrecognized type.");
+            printf("[DEBUG]\tEval node con\n");
+            {
+                ret * r = xmalloc(sizeof(ret));
+                memcpy(r, &(p->con), sizeof(ret));
+                return r;
             }
 
-            return retv;
-
         case nodeId:
+            printf("[DEBUG]\tEval node id\n");
             {
                 symrec * s = getsym(p->id.name);
                 if(s == NULL){
@@ -63,26 +56,28 @@ ret * ex(nodeType *p) {
                     exit(1);
                 }
 
-                retv = xmalloc(sizeof(ret));
-                retv->type = s->type;
+                ret * r = xmalloc(sizeof(ret));
+                r->type = s->type;
                 switch(s->type){
                     case INTTYPE:
-                        retv->i = s->i;
+                        r->i = s->i;
                         break;
                     case REALTYPE:
-                        retv->r = s->r;
+                        r->r = s->r;
                         break;
                     case BOOLTYPE:
-                        retv->b = s->b;
+                        r->b = s->b;
                         break;
                     default:
                         yyerror("Unrecognized type.");
                 }
 
-                return retv;
+                return r;
             }
 
         case nodeOpr:
+            printf("[DEBUG] operator %d\n", p->opr.oper);
+
             switch(p->opr.oper) {
                 case WHILE:
                     while(ex(p->opr.op[0]))
@@ -121,6 +116,7 @@ ret * ex(nodeType *p) {
 
 
                 case PRINT:
+                    printf("[DEBUG] printf");
                     {
                         ret * to_print = ex(p->opr.op[0]);
                         switch(to_print->type){
@@ -143,6 +139,7 @@ ret * ex(nodeType *p) {
                     }
 
                 case SEMICOLON:
+                    printf("[DEBUG]\t\tsemicolon\n");
                     ex(p->opr.op[0]);
                     return ex(p->opr.op[1]);
 
@@ -292,8 +289,17 @@ ret * ex(nodeType *p) {
 
                         return apply(&deq, a, b, dstType);
                     }
+                default:
+                    fprintf(stderr, "Operator not matched\n");
+                    exit(1);
             }
-   }
-    printf("%s %c\n", "Unable to evaluate node", p->opr.oper);
+            break;
+
+        default:
+            fprintf(stderr, "Node was not matched\n");
+            exit(1);
+    }
+
+    yyerror("[WTF] This should be DEAD CODE.");
     return 0;
 }
