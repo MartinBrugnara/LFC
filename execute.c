@@ -83,6 +83,17 @@ ret * ex(nodeType *p) {
     if (!p) return 0;
 
     switch(p->type) {
+        case nodeBlock:
+            // This is support for scoping.
+            /* NOTE: if function implementation is needed
+            // just store dic_list and run it after saved EBP
+            */
+            { // Language Semantic Course rocks!
+                symrec * EBP = symTable;
+                ex(p->blk);
+                //TODO: here we should free the stack;
+                symTable = EBP;
+            }
         case nodeDic:
             if (getsym(p->dic.name)) {
                 fprintf(stderr, "Variable %s was previously declared.", p->dic.name);

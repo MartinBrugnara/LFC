@@ -93,11 +93,11 @@ stmt: SEMICOLON                                     {$$ = opr(SEMICOLON, 2, NULL
     | PRINTREAL expr SEMICOLON                      {$$ = opr(PRINTREAL,1,$2);}
     | PRINTBOOL expr SEMICOLON                      {$$ = opr(PRINTBOOL,1,$2);}
     | variable EQ expr SEMICOLON                    {$$ = opr(EQ,2,$1,$3);}
-    | WHILE LP expr RP stmt                     {$$ = opr(WHILE,2,$3,$5);}
-    | IF LP expr RP stmt %prec IFX              {$$ = opr(IF,2,$3,$5);}
-    | IF LP expr RP stmt ELSE stmt              {$$ = opr(IF,3,$3,$5,$7);}
-    | FOR LP variable EQ expr TO expr RP stmt {$$ = opr(FOR,4,$3,$5,$7,$9);}
-    | LCURLY stmt_list RCURLY                       {$$ = $2;}
+    | WHILE LP expr RP stmt                         {$$ = opr(WHILE,2,$3,$5);}
+    | IF LP expr RP stmt %prec IFX                  {$$ = opr(IF,2,$3,$5);}
+    | IF LP expr RP stmt ELSE stmt                  {$$ = opr(IF,3,$3,$5,$7);}
+    | FOR LP variable EQ expr TO expr RP stmt       {$$ = opr(FOR,4,$3,$5,$7,$9);}
+    | LCURLY stmt_list RCURLY                       {$$ = block($2);}
     ;
 
 expr : INTEGER      {$$ = con(&$1, INTTYPE);}
@@ -126,7 +126,6 @@ expr : INTEGER      {$$ = con(&$1, INTTYPE);}
 %%
 
 int main(){
-    printf("pre yyparse\n");
     yyparse();
     return 0;
 }
