@@ -273,7 +273,7 @@ ret * ex(nodeType *p) {
                         }
 
                     case PLUS: f = f != NULL ? f : &sum;
-                    case MIN:  f = f != NULL ? f : &min;
+                    case MIN:  f = f != NULL ? f : &mni;
                     case MUL:  f = f != NULL ? f : &mul;
                     case DIV:  f = f != NULL ? f : &dvi;
                         mod = 1; // number -> number
