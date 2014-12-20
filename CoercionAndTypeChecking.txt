@@ -1,16 +1,34 @@
+Assignment (errors)
+
+Y = Yes
+U = Undefined
+E = Error
+
+   | I | R | B |
+---+---+---+---+
+ I | Y | E | U |
+---+---+---+---+
+ R | Y | Y | U |
+---+---+---+---+
+ B | Y | E | Y |
+---+---+---+---+
+
+
 Symbols with 2 operands
 
         | int - int | real real | bool bool | int real  | int bool  | rela bool |
 --------+-----------+-----------+-----------+-----------+-----------+-----------+
-+ - * / |    int    |    real   |   error   |   real    |   error   |   error   |
++ - * / |    int    |    real   |   error   |   real    |   error?  |   error?  |
 --------+-----------+-----------+-----------+-----------+-----------+-----------+
-  < <=  |    bool   |    bool   |   error   |   bool    |   error   |   error   |
+  < <=  |    bool   |    bool   |   error   |   bool    |   error?  |   error?  |
   > >=  |           |           |           |           |           |           |
 --------+-----------+-----------+-----------+-----------+-----------+-----------+
-  == != |   bool    |   bool    |   bool    |   bool    |   error   |   error   |
+  == != |   bool    |   bool    |   bool    |   bool    |   bool    |   error   |
 --------+-----------+-----------+-----------+-----------+-----------+-----------+
-AND  OR |    error  |   error   |   bool    |   error   |   error   |   error   |
+AND  OR |    error  |   error   |   bool    |   error   |   bool    |   error   |
 --------+-----------+-----------+-----------+-----------+-----------+-----------+
+
+error? : undefined due to undfined definition from assginament table
 
 Symbols with 1 operand
         |   int     |   real    |   bool    |
@@ -20,12 +38,4 @@ Symbols with 1 operand
  NOT    |   error   |   error   |   bool    |
 --------+-----------+-----------+-----------+
 
-Assignment (errors)
-   | I | R | B |
----+---+---+---+
- I |   |   |   |
----+---+---+---+
- R |   |   | E |
----+---+---+---+
- B |   | E |   |
----+---+---+---+
+

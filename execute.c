@@ -10,18 +10,16 @@
 typedef conNodeType ret;
 
 // used for ++/-- operations
-nodeType * _ONE = NULL;
+nodeType * __ONE = 0;
 nodeType * ONE() {
-    if (_ONE != NULL) return _ONE;
-    _ONE = (nodeType*)xmalloc(sizeof(nodeType));
+    if (!__ONE) {
+        printf("init one");
+        int uno = 1;
+        __ONE = con(&uno, INTTYPE);
+    }
+        printf("ret one\n");
 
-    _ONE->type = nodeCon;
-    _ONE->con = *(conNodeType *)xmalloc(sizeof(conNodeType));
-    _ONE->con.i = 1;
-    _ONE->con.r = 1.0;
-    _ONE->con.b = 1;
-
-    return _ONE;
+    return __ONE;
 }
 
 
@@ -84,40 +82,42 @@ ret * ex(nodeType *p) {
 
             switch(p->opr.oper) {
                 case WHILE:
-                    while(ex(p->opr.op[0]))
+                    while((*ex(p->opr.op[0])).b)
                         ex(p->opr.op[1]);
-                    return NULL;
+                    return 0;
 
                 case FOR:
                     {
-                        /* 0: var
+                        /*
+                         * 0: var
                          * 1: initial value
                          * 2: upper boundary
                          * 3: body
                          */
-                        // var = exp;
-                        // TODO: test me
-                        // symrec * s = getsym(p->opr.op[0]->id.name);
-                        //ex(opr(EQ, 2, id(s), p->opr.op[1]));
                         ex(opr(EQ, 2, p->opr.op[0], p->opr.op[1]));
-
                         // iterator < boundary
-                        while(ex(opr(LTE, 2, p->opr.op[0], p->opr.op[2]))){
+                        while((*ex(opr(LT, 2, p->opr.op[0], p->opr.op[2]))).b) {
                             // exec
                             ex(p->opr.op[3]);
-                            // inc
-                            ex(opr(PLUS, 2, p->opr.op[0], ONE()));
+
+                            ex(opr(EQ, 2,
+                                p->opr.op[0],
+                                con(&(*ex(opr(PLUS, 2,
+                                    p->opr.op[0],
+                                    ONE()))).i,
+                                    INTTYPE
+                                )
+                            ));
                         }
                         return 0;
                     }
 
                 case IF:
-                    if (ex(p->opr.op[0]))
+                    if ((*ex(p->opr.op[0])).b)
                         ex(p->opr.op[1]); // IF
                     else if (p->opr.nops > 2)
                         ex(p->opr.op[2]); // ELSE (if any)
                     return 0;
-
 
                 case PRINT:
                     {
@@ -292,7 +292,7 @@ ret * ex(nodeType *p) {
                  case AND:{
                         ret* a = ex(p->opr.op[0]);
                         ret* b = ex(p->opr.op[1]);
-                        
+
                         // TODO: add here type checking
 
                         return apply(&and, a, b, BOOLTYPE);
@@ -301,7 +301,7 @@ ret * ex(nodeType *p) {
                  case OR:{
                         ret* a = ex(p->opr.op[0]);
                         ret* b = ex(p->opr.op[1]);
-                        
+
                         // TODO: add here type checking
 
                         return apply(&or, a, b, BOOLTYPE);
@@ -309,7 +309,7 @@ ret * ex(nodeType *p) {
 
                  case NOT:{
                         ret* a = ex(p->opr.op[0]);
-                        
+
                         // TODO: add here type checking
 
                         return apply(&not, a, NULL, BOOLTYPE);

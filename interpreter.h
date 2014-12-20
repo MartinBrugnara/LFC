@@ -62,7 +62,6 @@ typedef struct nodeType{
     };
 } nodeType;
 
-
 nodeType * con(void *value, varTypeEnum type);
 nodeType * id(const char * const);
 

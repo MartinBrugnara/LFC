@@ -57,7 +57,7 @@
                     return INTEGER;
                 }
 
-(0,|[1-9][0-9]*,[0-9]+)    { // Parse the whole string and replace ',' the atof
+(0|[1-9][0-9]*),[0-9]+    { // Parse the whole string and replace ',' the atof
                             char * f = (char *) xmalloc(strlen(yytext) + 1);
                             strcpy(f, yytext);
 

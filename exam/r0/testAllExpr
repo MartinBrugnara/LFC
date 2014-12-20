@@ -11,11 +11,13 @@ main{
     print 1==1;
     print 1!=1;
 
-    real realExpr = (10+6)/(10/2)+(-2);
+    real realExpr;
+    realExpr = (10,0+6,0)/((10,0/2,0)+(-2,0));
     print realExpr;
 
-    bool booleanExpr = (10+4)-2<(5*50-1);
-    print booleanExpr
+    bool booleanExpr;
+    booleanExpr = (10+4)-2<(5*50-1);
+    print booleanExpr;
 
     print (1);
     print (1==1)||(false);
