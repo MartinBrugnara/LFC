@@ -16,9 +16,9 @@
 "=="            return DEQ;
 "!="            return NE;
 
-"||"            return OR; // Boolean expression evaluation
-"and"           return AND;
-"not"           return NOT;
+(\|\||or)       return OR; // Boolean expression evaluation
+(\&\&|and)      return AND;
+(\!|not)        return NOT;
 
 "while"         return WHILE; // Start of Flow Control
 "if"            return IF;
