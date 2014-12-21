@@ -7,15 +7,11 @@ void * xmalloc(size_t size);
 
 // Symbol Table (list)
 // Type for symrec
-// !! LEAVE in this order: coercion could be done via max(t1, t2);
+// !! LEAVE in this order: type checking is max(t1, t2);
 typedef enum{BOOLTYPE, INTTYPE, REALTYPE} varTypeEnum; // old: basicType
 typedef struct symrec {
 	char * name; // Comes from lexer
-    union { // Comes from yacc & run time
-        int     i;
-        float   r;
-        int     b;
-    };
+    float value;
     varTypeEnum type;
 
 	struct symrec *next;
@@ -29,11 +25,7 @@ typedef struct {
 /* Code node tree */
 /* constants */
 typedef struct {
-    union {
-        int i;
-        float r;
-        int b;
-    };
+    float value;
     varTypeEnum type;
 } conNodeType;
 
@@ -62,7 +54,7 @@ typedef struct nodeType{
 } nodeType;
 
 nodeType * block(nodeType * next);
-nodeType * con(void *value, varTypeEnum type);
+nodeType * con(float, varTypeEnum);
 nodeType * id(const char * const);
 
 symrec * getsym(const char * const identifier);
