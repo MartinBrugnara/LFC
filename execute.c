@@ -78,6 +78,7 @@ conNodeType * coercion(conNodeType * a, varTypeEnum req) {
 /* Execute a subtree.
  * Return node evaluation.
  */
+symrec * EBP = NULL;
 ret * ex(nodeType *p) {
     // Early exit on EOTree.
     if (!p) return 0;
@@ -89,14 +90,16 @@ ret * ex(nodeType *p) {
             // just store dic_list and run it after saved EBP
             */
             { // Language Semantic Course rocks!
-                symrec * EBP = symTable;
+                symrec * bk_EBP = EBP; // Backup EBP
+                EBP = symTable; // new EBP from ESP
+                // IMPROVEMENT: if func: ex(dec_list)
                 ex(p->blk);
-                //TODO: here we should free the stack;
-                symTable = EBP;
+                symTable = EBP; // Reset ESP
+                EBP = bk_EBP; // Reset EBP
             }
         case nodeDic:
-            if (getsym(p->dic.name)) {
-                fprintf(stderr, "Variable %s was previously declared.", p->dic.name);
+            if (isdefsym(p->dic.name, EBP)) {
+                fprintf(stderr, "[ERROR] Variable %s was previously declared.", p->dic.name);
                 exit(1);
             }
             putsym(p->dic.name, p->dic.type);
@@ -113,7 +116,7 @@ ret * ex(nodeType *p) {
             {
                 symrec * s = getsym(p->id.name);
                 if(s == NULL){
-                    fprintf(stderr, "There is not such '%s' variable in the symtable\n", p->id.name);
+                    fprintf(stderr, "[ERROR] There is not such '%s' variable in the symtable\n", p->id.name);
                     exit(1);
                 }
 
@@ -240,7 +243,7 @@ ret * ex(nodeType *p) {
                         {
                             symrec * s = getsym(p->opr.op[0]->id.name);
                             if(s == NULL){
-                                fprintf(stderr, "There is not such '%s' varibale in the symtable\n", p->opr.op[0]->id.name);
+                                fprintf(stderr, "[ERROR] There is not such '%s' varibale in the symtable\n", p->opr.op[0]->id.name);
                                 exit(1);
                             }
 
@@ -332,7 +335,7 @@ ret * ex(nodeType *p) {
                 break;
             }
         default:
-            yyerror("Node was not matched\n");
+            yyerror("Node was not matched.");
     }
 
     yyerror("[WTF] This should be DEAD CODE.");

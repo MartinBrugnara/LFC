@@ -66,6 +66,7 @@ nodeType * con(void *value, varTypeEnum type);
 nodeType * id(const char * const);
 
 symrec * getsym(const char * const identifier);
+int isdefsym(const char * const identifier, const symrec * const EBP);
 symrec * putsym(char const * identifier, varTypeEnum type);
 
 nodeType * dic(char *, varTypeEnum);

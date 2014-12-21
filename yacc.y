@@ -49,13 +49,13 @@
 %right NOT
 %nonassoc UMINUS RCURLY LCURLY LP RP COMMA SEMICOLON INTEGER REALNUM BOOLEAN MAIN
 
-%type <nPtr> stmt dec expr stmt_list opt_stmt_list opt_dec_list variable
+%type <nPtr> stmt dec expr stmt_list opt_dec_list variable scope opt_scope
 
 %%
 
 program: opt_dec_list
         MAIN
-        opt_stmt_list   {
+        opt_scope       {
                             /* since I do not give a fuck about func
                                 I deliberately skip scope creation */
                             ex($1); // Populate Global VARS
@@ -77,9 +77,12 @@ dec: INT  VARIABLE_NAME SEMICOLON    { $$ = dic($2, INTTYPE); }
 variable: VARIABLE_NAME             { $$ = id($1);}
         ;
 
-opt_stmt_list: /* empty */      {$$ = NULL;}
-            | stmt_list
-            ;
+opt_scope: /* empty */  {$$ = NULL;}
+         | scope        {$$ = $1;}
+         ;
+
+scope: LCURLY stmt_list RCURLY                       {$$ = block($2);}
+    ;
 
 stmt_list: stmt
          | stmt_list stmt   {$$ = opr(SEMICOLON, 2, $1, $2);}
@@ -97,7 +100,7 @@ stmt: SEMICOLON                                     {$$ = opr(SEMICOLON, 2, NULL
     | IF LP expr RP stmt %prec IFX                  {$$ = opr(IF,2,$3,$5);}
     | IF LP expr RP stmt ELSE stmt                  {$$ = opr(IF,3,$3,$5,$7);}
     | FOR LP variable EQ expr TO expr RP stmt       {$$ = opr(FOR,4,$3,$5,$7,$9);}
-    | LCURLY stmt_list RCURLY                       {$$ = block($2);}
+    | scope                                         {$$ = $1;}
     ;
 
 expr : INTEGER      {$$ = con(&$1, INTTYPE);}
