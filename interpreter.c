@@ -31,7 +31,6 @@ nodeType * block(nodeType * next) {
 /* Create a declaration node */
 nodeType * dic(char * name, varTypeEnum type) {
     nodeType *p = (nodeType*)xmalloc(sizeof(nodeType));
-
     p->type = nodeDic;
     p->dic.name = (char*)xmalloc(sizeof(strlen(name) + 1));
     strcpy(p->dic.name, name);
@@ -40,7 +39,7 @@ nodeType * dic(char * name, varTypeEnum type) {
 }
 
 /* Create a node containing a constant value */
-nodeType * con(void *value, varTypeEnum type){
+nodeType * con(float value, varTypeEnum type){
     nodeType *p = (nodeType*)xmalloc(sizeof(nodeType));
 
     /* copy information */
@@ -48,13 +47,12 @@ nodeType * con(void *value, varTypeEnum type){
     p->con.type = type;
     switch (type) {
         case INTTYPE:
-            p->con.i = *(int*)value;
-            break;
-        case REALTYPE:
-            p->con.r = *(float*)value;
+            p->con.value = (int)value;
             break;
         case BOOLTYPE:
-            p->con.b = *(int*)value;
+            p->con.value = value != 0;
+            break;
+        case REALTYPE:
             break;
         default:
             yyerror("Error handling constant type.");
@@ -99,7 +97,7 @@ symrec * putsym(char const * identifier, varTypeEnum type) {
     strcpy (ptr->name,identifier);
     ptr->type = type;
     ptr->next = symTable; // add in head O(1)
-    ptr->b=ptr->r=ptr->i=0;
+    ptr->value=0;
     symTable = ptr;
     return ptr;
 }

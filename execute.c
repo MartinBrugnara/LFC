@@ -6,15 +6,16 @@
 #include "y.tab.h"
 
 // Hold ex() return value.
+// Like in func return value are 'constant' (we do not have pointer);
 // NULL if no return value (eg declaration, assignment).
 typedef conNodeType ret;
 
 // used for ++/-- operations
+// Singleton | cache
 nodeType * __ONE = 0;
 nodeType * ONE() {
     if (!__ONE) {
-        int uno = 1;
-        __ONE = con(&uno, INTTYPE);
+        __ONE = con(1, INTTYPE);
     }
     return __ONE;
 }
@@ -28,49 +29,15 @@ char coercion_table[3][3] = {
 };
 
 // Cast if we can
-conNodeType * coercion(conNodeType * a, varTypeEnum req) {
+ret * coercion(ret * a, varTypeEnum req) {
     if (!a) return NULL;
-
     if (a->type == req) return a; // easy case
+    if (!coercion_table[req][a->type]) yyerror("Type error.");
 
-    if (!coercion_table[req][a->type]) yyerror("Incompatible type.");
-
-    switch (req) {
-        case INTTYPE:
-            {
-                int tmp;
-                switch (a->type) {
-                    case INTTYPE:   tmp = (int)a->i; break;
-                    case REALTYPE:  tmp = (int)a->r; break;
-                    case BOOLTYPE:  tmp = (int)a->b; break;
-                }
-                a->i = tmp;
-                break;
-            }
-        case REALTYPE:
-            {
-                float tmp;
-                switch (a->type) {
-                    case INTTYPE:  tmp = (float)a->i; break;
-                    case REALTYPE: tmp = (float)a->r; break;
-                    case BOOLTYPE: tmp = (float)a->b; break;
-                }
-                a->r = tmp;
-                break;
-            }
-        case BOOLTYPE:
-            {
-                int tmp;
-                switch (a->type) {
-                    case INTTYPE:  tmp = a->i != 0; break;
-                    case REALTYPE: tmp = a->r != 0; break;
-                    case BOOLTYPE: tmp = a->b != 0; break;
-                }
-                a->b = tmp;
-                break;
-            }
-    }
     a->type = req;
+    if (req == INTTYPE) a->value = (int)a->value;
+    else if (req == BOOLTYPE) a->value = a->value != 0;
+
     return a;
 }
 
@@ -121,20 +88,8 @@ ret * ex(nodeType *p) {
                 }
 
                 ret * r = xmalloc(sizeof(ret));
-                r->type = s->type;
-                switch(s->type){
-                    case INTTYPE:
-                        r->i = s->i;
-                        break;
-                    case REALTYPE:
-                        r->r = s->r;
-                        break;
-                    case BOOLTYPE:
-                        r->b = s->b;
-                        break;
-                    default:
-                        yyerror("Unrecognized type.");
-                }
+                r->type  = s->type;
+                r->value = s->value;
 
                 return r;
             }
@@ -148,7 +103,7 @@ ret * ex(nodeType *p) {
 
                 switch(p->opr.oper) {
                     case WHILE:
-                        while(coercion(ex(p->opr.op[0]), BOOLTYPE)->b)
+                        while(coercion(ex(p->opr.op[0]), BOOLTYPE)->value)
                             ex(p->opr.op[1]);
                         return 0;
 
@@ -163,21 +118,20 @@ ret * ex(nodeType *p) {
 
                             ret * c;
 
+                            symrec * s = getsym(p->opr.op[0]->id.name);
+
+                            // DO first assign via opr in order to ensure
+                            // type checking and coercion.
                             ex(opr(EQ, 2, p->opr.op[0], p->opr.op[1]));
+
                             // iterator < boundary
-                            while(coercion(ex(opr(LT, 2, p->opr.op[0], p->opr.op[2])), BOOLTYPE)->b) {
+                            while(coercion(ex(opr(LT, 2, p->opr.op[0], p->opr.op[2])), BOOLTYPE)->value) {
                                 // exec
                                 ex(p->opr.op[3]);
 
-                                // Please use singleton for con too
-                                ex(opr(EQ, 2,
-                                    p->opr.op[0],
-                                    con(&(*ex(opr(PLUS, 2,
-                                        p->opr.op[0],
-                                        ONE()))).i,
-                                        INTTYPE
-                                    )
-                                ));
+                                // Speed up (no need for other checks,
+                                // respect ev. scope;
+                                s->value += 1;
                             }
 
                             return 0;
@@ -185,7 +139,7 @@ ret * ex(nodeType *p) {
 
                     case IF:
                         {
-                            if(coercion(ex(p->opr.op[0]), BOOLTYPE)->b)
+                            if(coercion(ex(p->opr.op[0]), BOOLTYPE)->value)
                                 ex(p->opr.op[1]); // IF
                             else if (p->opr.nops > 2)
                                 ex(p->opr.op[2]); // ELSE (if any)
@@ -204,13 +158,13 @@ ret * ex(nodeType *p) {
                             switch(to_print->type){
                                 case INTTYPE:
                                     if (cmd != PRINT && cmd != PRINTINT) yyerror("Type error.");
-                                    printf("%d\n", to_print->i);
+                                    printf("%d\n", (int)to_print->value);
                                     break;
                                 case REALTYPE:
                                     if (cmd != PRINT && cmd != PRINTREAL) yyerror("Type error.");
                                     {
                                         char * fstr = (char*)xmalloc(46 + 1); // len(print(FLT_MAX);
-                                        sprintf(fstr, "%f", to_print->r);
+                                        sprintf(fstr, "%f", to_print->value);
 
                                         // substitute comma with dot
                                         char * c = fstr;
@@ -224,7 +178,7 @@ ret * ex(nodeType *p) {
 
                                 case BOOLTYPE:
                                     if (cmd != PRINT && cmd != PRINTBOOL) yyerror("Type error.");
-                                    if (to_print->b)
+                                    if (to_print->value)
                                         printf("true\n");
                                     else
                                         printf("false\n");
@@ -247,37 +201,9 @@ ret * ex(nodeType *p) {
                                 exit(1);
                             }
 
-                            ret * n = ex(p->opr.op[1]);
-
-                            // real = int
-                            if (!coercion_table[s->type][n->type])
-                                yyerror("Incompatible type assignment.");
-
-                            switch (s->type) {
-                                case INTTYPE:
-                                    switch (n->type) {
-                                        case INTTYPE:  s->i = n->i; break;
-                                        case REALTYPE: s->i = (int)n->r; break;
-                                        case BOOLTYPE: s->i = (int)n->b; break;
-                                    }
-                                    break;
-                                case REALTYPE:
-                                    switch (n->type) {
-                                        case INTTYPE:  s->r = (float)n->i; break;
-                                        case REALTYPE: s->r = n->r; break;
-                                        case BOOLTYPE: s->r = (float)n->b; break;
-                                    }
-                                    break;
-
-                                case BOOLTYPE:
-                                    switch (n->type) {
-                                        case INTTYPE:  s->b = n->i != 0; break;
-                                        case REALTYPE: s->b = n->r != 0; break;
-                                        case BOOLTYPE: s->b = n->b; break;
-                                    }
-                                    break;
-                            }
-                            return n;
+                            ret * val = coercion(ex(p->opr.op[1]), s->type);
+                            s->value =  val->type;
+                            return val;
                         }
 
 
@@ -322,12 +248,9 @@ ret * ex(nodeType *p) {
                                     break;
                             }
 
-                            return apply(
-                                    f,
-                                    coercion(a, valType),
-                                    coercion(b, valType),
-                                    retType
-                                    );
+                            return ex(con((*f)(
+                                coercion(a, valType)->value,
+                                b ? coercion(b, valType)->value : 0), retType));
                         }
                     default:
                         yyerror("Operator not matched.");

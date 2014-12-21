@@ -103,9 +103,9 @@ stmt: SEMICOLON                                     {$$ = opr(SEMICOLON, 2, NULL
     | scope                                         {$$ = $1;}
     ;
 
-expr : INTEGER      {$$ = con(&$1, INTTYPE);}
-    | REALNUM       {$$ = con(&$1, REALTYPE);}
-    | BOOLEAN       {$$ = con(&$1, BOOLTYPE);}
+expr : INTEGER      {$$ = con($1, INTTYPE);}
+    | REALNUM       {$$ = con($1, REALTYPE);}
+    | BOOLEAN       {$$ = con($1, BOOLTYPE);}
     | variable      /*manage variables - namely an IDENTIFIER*/
     | LP expr RP    {$$ = $2;}
 
