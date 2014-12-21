@@ -1,18 +1,27 @@
 int a;
 
 main {
-	a = 75;
-	print a;
+    a = 75;
+    print a;
 
-	{
-		real c;
-		c =  7,78;
-		print c;
-		bool g;
-		g = true;
-	}
+    int OSTIA;
+    OSTIA = 69;
 
-	print c;
-	print g;
-	print a;
+    {
+        real c;
+        c =  7,78;
+        print c;
+
+        print OSTIA;
+
+        bool OSTIA;
+        OSTIA = true;
+        print OSTIA;
+    }
+
+    print OSTIA;
+
+    print c;
+    print g;
+    print a;
 }

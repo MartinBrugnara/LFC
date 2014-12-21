@@ -4,8 +4,10 @@
 #include <string.h>
 #include <stdarg.h>
 
+// GLOBAL
+
 void yyerror(const char * msg) {
-    fprintf (stderr, "%s\n", msg);
+    fprintf (stderr, "[ERROR] %s\n", msg);
     exit(1);
 }
 
@@ -13,7 +15,7 @@ void yyerror(const char * msg) {
 void * xmalloc(size_t size) {
     void * p = malloc(size);
     if (p == NULL) {
-        yyerror("Out of memory");
+        yyerror("Out of memory.");
     }
     return p;
 }
@@ -55,7 +57,7 @@ nodeType * con(void *value, varTypeEnum type){
             p->con.b = *(int*)value;
             break;
         default:
-            yyerror("Error handling constant type");
+            yyerror("Error handling constant type.");
     }
     return p;
 }
@@ -64,18 +66,21 @@ nodeType * con(void *value, varTypeEnum type){
  * Also checks that the var has been yet declared.
  */
 nodeType * id(const char * const name){
-    /*
-    if (getsym(name) == NULL) {
-        // Symbol not yet in SymT
-        fprintf(stderr, "Undeclared variable %s\n", name);
-        exit(1);
-    }*/
-
     nodeType * p = (nodeType*)xmalloc(sizeof(nodeType));
     p->type      = nodeId;
     p->id.name   = (char*)xmalloc(sizeof(strlen(name)) + 1);
     strcpy(p->id.name, name);
     return p;
+}
+
+/* Check if a sym is defined in current scope.
+ * Return boolean (0,1)
+ */
+int isdefsym(const char * const name, const symrec * const EBP) {
+    for (symrec *ptr = symTable; ptr != NULL && ptr != EBP; ptr=(symrec *)ptr->next)
+        if (!strcmp(ptr->name, name))
+            return 1; // found
+    return 0;
 }
 
 // Search in Symbol Table (that is a fucking list) O(n)
