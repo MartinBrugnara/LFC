@@ -3,7 +3,7 @@
 LEX = lex
 YACC = yacc -d
 
-CC = cc -std=c99
+CC = clang -std=c99
 
 interpreter: y.tab.o lex.yy.o coercion.o functional.o helper.o interpreter.o execute.o
 	$(CC) -o interpreter helper.o y.tab.o lex.yy.o coercion.o functional.o interpreter.o execute.o -ll -lm
