@@ -29,8 +29,6 @@ Symbols with 2 operands
 AND  OR |    error  |   error   |   bool    |   error   |   bool    |   error   |
 --------+-----------+-----------+-----------+-----------+-----------+-----------+
 
-error? : undefined due to undfined definition from assginament table
-
 Symbols with 1 operand
         |   int     |   real    |   bool    |
 --------+-----------+-----------+-----------+
