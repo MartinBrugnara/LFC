@@ -1,3 +1,5 @@
+/* Author: Brugnara Martin #157791 */
+
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>

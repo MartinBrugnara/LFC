@@ -1,6 +1,4 @@
-/*
-* Author: Martin Brugnara #157791 <martin.brugnara@studenti.unitn.it>
-*/
+/* Author: Brugnara Martin #157791 */
 
 %{
     #include <stdlib.h>

@@ -1,18 +1,42 @@
-(int|real|bool)     TYPE
-int X;
-X = 1;
-bool expression evaluation
+/* Author: Brugnara Martin #157791 */
 
+I've developed:
+    - b.i
+    - b.ii
+    - b.iii
+    - b.iv
+    and I apply for b.vii .
 
-type checking, type auto promotion (with no precision loss: NO int X = (real 1))
+Implementation note:
+    I rewrote the interpreter from scratch,
+    taking as example the previous class works in particular 5.2 .
 
-choercion (real -> int) (int -> bool) (int + int = int) (float + int = float)
+    Due to that is impossible to me to separate "the extra functions";
+    please note that some function have similar name due to semantic
+    but internally works differently .
 
-print (1 1,1 true false)
+    My implementation does not handle:
+        - functions
+        - array
+        - struct
 
-int [3] array
-int [3][4] array
+Extra:
+    My implementation support block scoping:
+    like in C is possible to do things like
 
-array[1] = 3
+    main {
+        int a;
+        a = 3;
 
-print array()
+        {
+            bool a;
+            a = false;
+            print a;
+        }
+
+        print a;
+    }
+
+    the expected output is:
+        false
+        3
