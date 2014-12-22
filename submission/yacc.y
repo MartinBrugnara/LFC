@@ -56,8 +56,6 @@
 program: opt_dec_list
         MAIN
         scope       {
-                            /* since I do not give a fuck about func
-                                I deliberately skip scope creation */
                             ex($1); // Populate Global VARS
                             ex($3); // Exec Main
                             exit(0); // exit success

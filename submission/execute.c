@@ -1,10 +1,18 @@
 /* Author: Brugnara Martin #157791 */
 
+/* This file contains the function that really execute the code: ex()
+ *
+ * This file could be considered similar to 5.2/calcInterpreter.c
+ * But this is completely rewrote.
+ */
+
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
 #include "interpreter.h"
+#include "helper.h"
 #include "functional.h"
+#include "coercion.h"
 #include "y.tab.h"
 
 // Hold ex() return value.
@@ -22,31 +30,9 @@ nodeType * ONE() {
     return __ONE;
 }
 
-// [dst][src]
-char coercion_table[3][3] = {
-    // B, I, R
-      {1, 1, 0}, // B
-      {0, 1, 0}, // I
-      {0, 1, 1}, // R
-};
 
-// Cast if we can
-ret * coercion(ret * a, varTypeEnum req) {
-    if (!a) return 0;
-    if (a->type == req) return a; // easy case
-    if (!coercion_table[req][a->type]) yyerror("Type error.");
-
-    a->type = req;
-    if (req == REALTYPE) a->value = (float)a->value;
-    else if (req == BOOLTYPE) a->value = a->value != 0;
-
-    return a;
-}
-
-
-/* Execute a subtree.
- * Return node evaluation.
- */
+/* Execute a tree.
+ * return conNodeType */
 symrec * EBP = NULL;
 ret * ex(nodeType *p) {
     // Early exit on EOTree.
@@ -58,14 +44,16 @@ ret * ex(nodeType *p) {
             /* NOTE: if function implementation is needed
             // just store dic_list and run it after saved EBP
             */
-            { // Language Semantic Course rocks!
+            {
                 symrec * bk_EBP = EBP; // Backup EBP
                 EBP = symTable; // new EBP from ESP
+
                 // IMPROVEMENT: if func: ex(dec_list)
                 ex(p->blk);
+
                 symTable = EBP; // Reset ESP
                 EBP = bk_EBP; // Reset EBP
-                return 0; /* DIO PORCO IL BREAK MARTIN */
+                return 0;
             }
         case nodeDic:
             if (isdefsym(p->dic.name, EBP)) {
@@ -260,6 +248,6 @@ ret * ex(nodeType *p) {
             yyerror("Node was not matched.");
     }
 
-    yyerror("[WTF] This should be DEAD CODE.");
+    yyerror("WTF! This should be DEAD CODE.");
     return 0;
 }
