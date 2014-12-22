@@ -1,0 +1,32 @@
+main {
+    int i;
+    bool b;
+    real r;
+
+    bool ci;
+
+    i = 10;
+    b = false;
+    r = 2,3;
+
+    print i + i;
+    print r + r;
+    print b == b;
+
+    print i + r;
+    print r + i;
+
+    print i == r;
+
+    i = 10;
+    ci = i;
+    print ci;
+
+    i = 0;
+    ci = i;
+    print ci;
+
+    i = 2;
+    r = 2,0;
+    print i == r;
+}

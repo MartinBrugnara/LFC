@@ -56,7 +56,7 @@
                     }
 
 0               {
-                    yylval.iVal = atoi(yytext);
+                    yylval.iVal = 0;
                     return INTEGER;
                 }
 
@@ -69,7 +69,7 @@
                             for(; *c != ','; c++);
                             *c = '.';
 
-                            yylval.rVal = atof(f);
+                            yylval.rVal = (float)atof(f);
 
                             free(f);
                             return REALNUM;
