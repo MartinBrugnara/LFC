@@ -25,6 +25,5 @@ float or(float a, float b);
 float not(float a, float b);
 
 varTypeEnum max(varTypeEnum a, varTypeEnum b);
-conNodeType * apply(mappable f, conNodeType * a, conNodeType * b, varTypeEnum dstType);
 
 #endif

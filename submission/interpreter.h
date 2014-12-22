@@ -50,7 +50,7 @@ typedef struct nodeType{
         idNodeType id;          /* identifiers */
         oprNodeType opr;        /* operators */
         dicNodeType dic;        /* declararion  */
-        struct nodeType * blk;  /* scooping and procedure */
+        struct nodeType * blk;  /* scoping and procedure */
     };
 } nodeType;
 

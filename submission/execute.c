@@ -116,8 +116,7 @@ ret * ex(nodeType *p) {
                                 // exec
                                 ex(p->opr.op[3]);
 
-                                // Speed up (no need for other checks,
-                                // respect ev. scope;
+                                // Speed up (no need for other checks)
                                 s->value += 1;
                             }
 
