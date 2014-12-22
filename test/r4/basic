@@ -24,6 +24,6 @@ main{
 	print false;
 	print true;
 	print false and not true;
-	print true || (not false and true);
+	print true or (not false and true);
 
 }

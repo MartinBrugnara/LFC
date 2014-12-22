@@ -7,4 +7,5 @@ main{
 	 i = i +1;
 	}
 	printInt array[2];
+
 }

@@ -1,4 +1,4 @@
-# Brugnara Martin 157791
+# Author: Brugnara Martin #157791
 
 LEX = lex
 YACC = yacc -d
