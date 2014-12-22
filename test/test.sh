@@ -5,7 +5,7 @@ if [[ -z $1 ]];then
     exit 1
 fi
 
-cd .. && make clean && make && cd exam
+cd .. && make clean && make && cd -
 
 for F in $1/*; do
     echo "------------------------------------------------------------------------"
