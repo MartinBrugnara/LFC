@@ -1,25 +1,20 @@
 /* Author: Brugnara Martin #157791 */
 
-#include "interpreter.h"
+/* This file include function to create tree nodes.
+ * It's used by yacc and by the ex() function.
+ *
+ * In some part is similar to es5.2/auxiliaryFunctions.c
+ * but it's completely rewrote.
+ */
+
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
 #include <stdarg.h>
+#include "interpreter.h"
+#include "helper.h"
 
-void yyerror(const char * msg) {
-    fprintf (stderr, "[ERROR] %s\n", msg);
-    exit(1);
-}
-
-/* Malloc with out of memory error */
-void * xmalloc(size_t size) {
-    void * p = malloc(size);
-    if (p == NULL) {
-        yyerror("Out of memory.");
-    }
-    return p;
-}
-
+/* Create a block / scope node */
 nodeType * block(nodeType * code) {
     nodeType *p = (nodeType*)xmalloc(sizeof(nodeType));
     p->type = nodeBlock;
@@ -31,7 +26,6 @@ nodeType * block(nodeType * code) {
 /* Create a declaration node */
 nodeType * dic(char * name, varTypeEnum type) {
     nodeType *p = (nodeType*)xmalloc(sizeof(nodeType));
-
     p->type = nodeDic;
     // NOT SURE IF COPY IS NEEDED (probably not)
     p->dic.name = (char*)xmalloc(sizeof(strlen(name) + 1));
@@ -64,9 +58,7 @@ nodeType * con(float value, varTypeEnum type){
     return p;
 }
 
-/* Wrap symrec ref into a id node
- * Also checks that the var has been yet declared.
- */
+/* Create an id node */
 nodeType * id(const char * const name){
     nodeType * p = (nodeType*)xmalloc(sizeof(nodeType));
     p->type      = nodeId;
@@ -76,7 +68,7 @@ nodeType * id(const char * const name){
 }
 
 /* Check if a sym is defined in current scope.
- * Return boolean (0,1)
+ * Return 1 (yes) 0 (no)
  */
 int isdefsym(const char * const name, const symrec * const EBP) {
     for (symrec *ptr = symTable; ptr != NULL && ptr != EBP; ptr=(symrec *)ptr->next)
@@ -85,7 +77,7 @@ int isdefsym(const char * const name, const symrec * const EBP) {
     return 0;
 }
 
-// Search in Symbol Table (that is a fucking list) O(n)
+/* Search in Symbol Table ('Table' ... Stack ) O(n) */
 symrec * getsym(const char * const name) {
     for (symrec *ptr = symTable; ptr != NULL; ptr=(symrec *)ptr->next){
         if (!strcmp(ptr->name, name)) {
@@ -95,6 +87,8 @@ symrec * getsym(const char * const name) {
     return (symrec*)0; // not found
 }
 
+
+/* Register a var in Symbol Table ('Table' ... Stack ) O(1) */
 symrec * putsym(char const * identifier, varTypeEnum type) {
     symrec *ptr = (symrec *)xmalloc(sizeof (symrec));
     ptr->name = (char *) xmalloc (strlen (identifier) + 1);

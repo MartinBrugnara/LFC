@@ -3,35 +3,34 @@
 #ifndef INTERPRETER
 #define INTERPRETER
 
-#include <sys/types.h>
+/* ============================  Symbol Table  ============================== */
 
-void * xmalloc(size_t size);
-
-// Symbol Table (list)
-// Type for symrec
-// !! LEAVE in this order: type checking is max(t1, t2);
+// DO NOT CHANGE THE ORDER. (-> see how type promotion is implemented (max))
 typedef enum{BOOLTYPE, INTTYPE, REALTYPE} varTypeEnum; // old: basicType
 typedef struct symrec {
-	char * name; // Comes from lexer
+	char * name;
     float value;
     varTypeEnum type;
 
 	struct symrec *next;
 } symrec;
 
+/* ============================ Sym Table func ============================== */
+symrec * getsym(const char * const identifier);
+int isdefsym(const char * const identifier, const symrec * const EBP);
+symrec * putsym(char const * identifier, varTypeEnum type);
+
+/* ============================ Code node tree ============================== */
 typedef struct {
     char * name;
     varTypeEnum type;
 } dicNodeType;
 
-/* Code node tree */
-/* constants */
 typedef struct {
     float value;
     varTypeEnum type;
 } conNodeType;
 
-/* identifiers */
 typedef struct {char * name;} idNodeType;
 
 /* operators */
@@ -51,23 +50,18 @@ typedef struct nodeType{
         idNodeType id;          /* identifiers */
         oprNodeType opr;        /* operators */
         dicNodeType dic;        /* declararion  */
-        struct nodeType * blk;         /* scooping and procedure */
+        struct nodeType * blk;  /* scooping and procedure */
     };
 } nodeType;
 
+/* ============================ Node tree func ============================== */
 nodeType * block(nodeType * next);
 nodeType * con(float, varTypeEnum);
 nodeType * id(const char * const);
-
-symrec * getsym(const char * const identifier);
-int isdefsym(const char * const identifier, const symrec * const EBP);
-symrec * putsym(char const * identifier, varTypeEnum type);
-
 nodeType * dic(char *, varTypeEnum);
 nodeType * opr(int oper, int nops, ...);
 
-void yyerror(const char *);
-
-/* GLOBAL VARS */
+/* ============================  GLOBAL VARS   ============================== */
 extern symrec * symTable; /* declared in yacc.y */
+
 #endif
