@@ -5,14 +5,14 @@ YACC = yacc -d
 
 CC = cc -std=c99
 
-interpreter: y.tab.o lex.yy.o interpreter.o execute.o functional.o
-	$(CC) -o interpreter y.tab.o lex.yy.o interpreter.o execute.o functional.o -ll -lm
+interpreter: y.tab.o lex.yy.o coercion.o functional.o helper.o interpreter.o execute.o
+	$(CC) -o interpreter helper.o y.tab.o lex.yy.o coercion.o functional.o interpreter.o execute.o -ll -lm
 
-interpreter.o: interpreter.c
-
-execute.o: execute.c
-
+coercion.o: coercion.c
 functional.o: functional.c
+helper.o: helper.c
+interpreter.o: interpreter.c
+execute.o: execute.c
 
 lex.yy.o: lex.yy.c y.tab.h
 

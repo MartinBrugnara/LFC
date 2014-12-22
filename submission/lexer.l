@@ -4,6 +4,7 @@
     #include <stdlib.h>
     #include <string.h>
     #include "interpreter.h"
+    #include "helper.h"
     #include "y.tab.h"
 %}
 
