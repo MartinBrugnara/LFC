@@ -1,3 +1,5 @@
+/* Author: Brugnara Martin #157791 */
+
 #ifndef FUNCTIONAL
 #define FUNCTIONAL
 
