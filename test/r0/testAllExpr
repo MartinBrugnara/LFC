@@ -20,5 +20,5 @@ main{
     print booleanExpr;
 
     print (1);
-    print (1==1)||(false);   
+    print (1==1)or(false);
 }

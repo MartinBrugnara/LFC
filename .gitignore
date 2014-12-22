@@ -1,5 +1,5 @@
 *.o
-lex.yy.c
+lex.yy.*
 *.tab.*
 interpreter
 *.output

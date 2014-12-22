@@ -55,6 +55,7 @@ main {
     r = false;
 	{
 		int r; int t; bool p; real wq;
+        r = 33;
         print r;
 	}
     print 2;
