@@ -30,12 +30,12 @@ char coercion_table[3][3] = {
 
 // Cast if we can
 ret * coercion(ret * a, varTypeEnum req) {
-    if (!a) return NULL;
+    if (!a) return 0;
     if (a->type == req) return a; // easy case
     if (!coercion_table[req][a->type]) yyerror("Type error.");
 
     a->type = req;
-    if (req == INTTYPE) a->value = (int)a->value;
+    if (req == REALTYPE) a->value = (float)a->value;
     else if (req == BOOLTYPE) a->value = a->value != 0;
 
     return a;
@@ -63,10 +63,11 @@ ret * ex(nodeType *p) {
                 ex(p->blk);
                 symTable = EBP; // Reset ESP
                 EBP = bk_EBP; // Reset EBP
+                return 0; /* DIO PORCO IL BREAK MARTIN */
             }
         case nodeDic:
             if (isdefsym(p->dic.name, EBP)) {
-                fprintf(stderr, "[ERROR] Variable %s was previously declared.", p->dic.name);
+                fprintf(stderr, "[ERROR] Variable %s was previously declared.\n", p->dic.name);
                 exit(1);
             }
             putsym(p->dic.name, p->dic.type);
@@ -82,16 +83,11 @@ ret * ex(nodeType *p) {
         case nodeId:
             {
                 symrec * s = getsym(p->id.name);
-                if(s == NULL){
+                if(!s) {
                     fprintf(stderr, "[ERROR] There is not such '%s' variable in the symtable\n", p->id.name);
                     exit(1);
                 }
-
-                ret * r = xmalloc(sizeof(ret));
-                r->type  = s->type;
-                r->value = s->value;
-
-                return r;
+                return ex(con(s->value, s->type));
             }
 
         case nodeOpr:
@@ -105,6 +101,7 @@ ret * ex(nodeType *p) {
                     case WHILE:
                         while(coercion(ex(p->opr.op[0]), BOOLTYPE)->value)
                             ex(p->opr.op[1]);
+
                         return 0;
 
                     case FOR:
@@ -158,7 +155,7 @@ ret * ex(nodeType *p) {
                             switch(to_print->type){
                                 case INTTYPE:
                                     if (cmd != PRINT && cmd != PRINTINT) yyerror("Type error.");
-                                    printf("%d\n", (int)to_print->value);
+                                    printf("%d\n", (int)(to_print->value));
                                     break;
                                 case REALTYPE:
                                     if (cmd != PRINT && cmd != PRINTREAL) yyerror("Type error.");
@@ -202,8 +199,8 @@ ret * ex(nodeType *p) {
                             }
 
                             ret * val = coercion(ex(p->opr.op[1]), s->type);
-                            s->value =  val->type;
-                            return val;
+                            s->value = val->value;
+                            return 0;
                         }
 
 

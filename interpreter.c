@@ -4,8 +4,6 @@
 #include <string.h>
 #include <stdarg.h>
 
-// GLOBAL
-
 void yyerror(const char * msg) {
     fprintf (stderr, "[ERROR] %s\n", msg);
     exit(1);
@@ -20,10 +18,10 @@ void * xmalloc(size_t size) {
     return p;
 }
 
-nodeType * block(nodeType * next) {
+nodeType * block(nodeType * code) {
     nodeType *p = (nodeType*)xmalloc(sizeof(nodeType));
     p->type = nodeBlock;
-    p->blk = next;
+    p->blk = code;
     return p;
 }
 
@@ -31,10 +29,13 @@ nodeType * block(nodeType * next) {
 /* Create a declaration node */
 nodeType * dic(char * name, varTypeEnum type) {
     nodeType *p = (nodeType*)xmalloc(sizeof(nodeType));
+
     p->type = nodeDic;
+    // NOT SURE IF COPY IS NEEDED (probably not)
     p->dic.name = (char*)xmalloc(sizeof(strlen(name) + 1));
     strcpy(p->dic.name, name);
     p->dic.type = type;
+
     return p;
 }
 
@@ -53,6 +54,7 @@ nodeType * con(float value, varTypeEnum type){
             p->con.value = value != 0;
             break;
         case REALTYPE:
+            p->con.value = value;
             break;
         default:
             yyerror("Error handling constant type.");
@@ -88,7 +90,7 @@ symrec * getsym(const char * const name) {
             return ptr; // found
         }
     }
-    return NULL; // not found
+    return (symrec*)0; // not found
 }
 
 symrec * putsym(char const * identifier, varTypeEnum type) {
