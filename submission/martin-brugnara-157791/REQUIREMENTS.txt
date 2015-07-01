@@ -1,0 +1,42 @@
+/* Author: Brugnara Martin #157791 */
+
+I've developed:
+    - b.i
+    - b.ii
+    - b.iii
+    - b.iv
+    and I apply for b.vii .
+
+Implementation note:
+    I rewrote the interpreter from scratch,
+    taking as example the previous class works in particular 5.2 .
+
+    Due to that is impossible to me to separate "the extra functions";
+    please note that some function have similar name due to semantic
+    but internally works differently .
+
+    My implementation does not handle:
+        - functions
+        - array
+        - struct
+
+Extra:
+    My implementation support block scoping:
+    like in C is possible to do things like
+
+    main {
+        int a;
+        a = 3;
+
+        {
+            bool a;
+            a = false;
+            print a;
+        }
+
+        print a;
+    }
+
+    the expected output is:
+        false
+        3
